@@ -1,6 +1,7 @@
 package accessToPostgre;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -46,8 +47,8 @@ public class Application {
 		} else {
 			System.out.println("No Selection");
 		}
-		String columnName = null, createDbQuery = "CREATE DATABASE IF NOT EXISTS ";
-		String createTableQuery = "CREATE TABLE Persons (\r\n";
+		String columnName = null, createDbQuery = "CREATE DATABASE IF NOT EXISTS DB1;";
+		String createTableQuery;
 
 		// Connection avec la base de donnée access
 		try {
@@ -55,46 +56,46 @@ public class Application {
 			Connection cd = DriverManager.getConnection(DBurl);
 			System.out.println("Connection reussie a la base de donnee");
 			Statement s = cd.createStatement();
-			ResultSet t = s.executeQuery("SELECT COUNT(*) AS COUNT FROM Table1");
-			t.next();
-			ResultSet r = s.executeQuery("SELECT * FROM Table1");
-			ResultSetMetaData l = r.getMetaData();
+			DatabaseMetaData metaData = cd.getMetaData();
+			ResultSet rs = metaData.getTables(null, null, "%", null);
 
-			int columnCount = l.getColumnCount();
-			int taille = t.getInt("COUNT");
+			System.out.println(createDbQuery);
+			i = 1;
 
-			i++;
-			createDbQuery = createDbQuery + l.getTableName(i);
-			System.out.println("ok");
-			for (int j = 1; j < columnCount + 1; j++) {
-				System.out.println(l.getColumnName(columnCount));
-				System.out.println(l.getColumnType(j));
-				columnName = l.getColumnName(j);
-				createTableQuery = createTableQuery + "    " + columnName + " ";
+			while (rs.next()) {
+				createTableQuery = "CREATE TABLE " + rs.getString("TABLE_NAME") + "(\r\n";
+				ResultSet t = s.executeQuery("SELECT COUNT(*) AS COUNT FROM " + rs.getString("TABLE_NAME"));
+				t.next();
+				ResultSet r = s.executeQuery("SELECT * FROM " + rs.getString("TABLE_NAME"));
+				ResultSetMetaData l = r.getMetaData();
+				int columnCount = l.getColumnCount();
+				int taille = t.getInt("COUNT");
+				for (int j = 1; j < columnCount + 1; j++) {
 
-				switch (l.getColumnType(j)) {
-				case 4:
-					System.out.println("Integer");
-					createTableQuery = createTableQuery + "INT NOT NULL,\r\n";
-					break;
-				case 12:
-					System.out.println("varchar");
-					createTableQuery = createTableQuery + "VARCHAR ( 50 ) NOT NULL,\r\n";
-					break;
-				case 16:
-					System.out.println("Boolean");
-					createTableQuery = createTableQuery + "BOOLEAN NOT NULL,\r\n";
-					break;
-				default:
-					// code block
+					columnName = l.getColumnName(j);
+					createTableQuery = createTableQuery + "    " + columnName + " ";
+
+					switch (l.getColumnType(j)) {
+					case 4:
+						createTableQuery = createTableQuery + "INT NOT NULL,\r\n";
+						break;
+					case 12:
+						createTableQuery = createTableQuery + "VARCHAR ( 50 ) NOT NULL,\r\n";
+						break;
+					case 16:
+						createTableQuery = createTableQuery + "BOOLEAN NOT NULL,\r\n";
+						break;
+					case -5:
+						createTableQuery = createTableQuery + "BIGINT NOT NULL,\r\n";
+						break;
+					default:
+						// code block
+					}
 				}
 
+				createTableQuery = createTableQuery + ");";
+				System.out.println(createTableQuery);
 			}
-			createDbQuery = createDbQuery + ");";
-			createTableQuery = createTableQuery + ");";
-			System.out.println(createDbQuery);
-			System.out.println(createTableQuery);
-			r.close();
 			s.close();
 			cd.close();
 		} catch (SQLException e) {
@@ -103,6 +104,5 @@ public class Application {
 		}
 		// -----------------------
 		scan.close();
-
 	}
 }
