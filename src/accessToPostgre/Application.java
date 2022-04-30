@@ -17,9 +17,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.FileFilter;
 
-//import accesstopostgre.MyFrame;
-//perspective 
-
 public class Application {
 
 	public static void main(String[] args) {
@@ -49,36 +46,54 @@ public class Application {
 		} else {
 			System.out.println("No Selection");
 		}
+		String columnName = null, createDbQuery = "CREATE DATABASE IF NOT EXISTS ";
+		String createTableQuery = "CREATE TABLE Persons (\r\n";
 
+		// Connection avec la base de donnée access
 		try {
 			int i = 0;
 			Connection cd = DriverManager.getConnection(DBurl);
 			System.out.println("Connection reussie a la base de donnee");
 			Statement s = cd.createStatement();
-			ResultSet t = s.executeQuery("SELECT COUNT(*) AS COUNT FROM UNI");
+			ResultSet t = s.executeQuery("SELECT COUNT(*) AS COUNT FROM Table1");
 			t.next();
-			ResultSet r = s.executeQuery("SELECT * FROM UNI");
+			ResultSet r = s.executeQuery("SELECT * FROM Table1");
 			ResultSetMetaData l = r.getMetaData();
-			int p = l.getColumnCount();
+
+			int columnCount = l.getColumnCount();
 			int taille = t.getInt("COUNT");
-			int[] ID = new int[taille];
-			String[] nom = new String[taille];
-			int[] nbr = new int[taille];
-			while (r.next()) {
-				ID[i] = r.getInt("ID");
-				nom[i] = r.getString("nomuni");
-				nbr[i] = r.getInt("nbretudiants");
-				i++;
+
+			i++;
+			createDbQuery = createDbQuery + l.getTableName(i);
+			System.out.println("ok");
+			for (int j = 1; j < columnCount + 1; j++) {
+				System.out.println(l.getColumnName(columnCount));
+				System.out.println(l.getColumnType(j));
+				columnName = l.getColumnName(j);
+				createTableQuery = createTableQuery + "    " + columnName + " ";
+
+				switch (l.getColumnType(j)) {
+				case 4:
+					System.out.println("Integer");
+					createTableQuery = createTableQuery + "INT NOT NULL,\r\n";
+					break;
+				case 12:
+					System.out.println("varchar");
+					createTableQuery = createTableQuery + "VARCHAR ( 50 ) NOT NULL,\r\n";
+					break;
+				case 16:
+					System.out.println("Boolean");
+					createTableQuery = createTableQuery + "BOOLEAN NOT NULL,\r\n";
+					break;
+				default:
+					// code block
+				}
+
 			}
-			// for( i =0 ; i<taille ; i++)
-			// System.out.println("ID = "+ ID[i] +",nom = " + nom[i] + ", nbr = " + nbr[i]);
-
-			System.out.println(l.getTableName(i));
-
-			for (int j = 1; j < p + 1; j++) {
-				System.out.println(l.getColumnName(j));
-			}
-
+			createDbQuery = createDbQuery + ");";
+			createTableQuery = createTableQuery + ");";
+			System.out.println(createDbQuery);
+			System.out.println(createTableQuery);
 			r.close();
 			s.close();
 			cd.close();
@@ -86,6 +101,7 @@ public class Application {
 
 			e.printStackTrace();
 		}
+		// -----------------------
 		scan.close();
 
 	}
