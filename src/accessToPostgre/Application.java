@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.Scanner;
-
+import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -52,49 +52,60 @@ public class Application {
 
 		// Connection avec la base de donnée access
 		try {
+			ArrayList<String> primary = new ArrayList<String>();
 			int i = 0;
 			Connection cd = DriverManager.getConnection(DBurl);
 			System.out.println("Connection reussie a la base de donnee");
 			Statement s = cd.createStatement();
 			DatabaseMetaData metaData = cd.getMetaData();
 			ResultSet rs = metaData.getTables(null, null, "%", null);
-
+ 
+			
+            
 			System.out.println(createDbQuery);
-			i = 1;
-
-			while (rs.next()) {
-				createTableQuery = "CREATE TABLE " + rs.getString("TABLE_NAME") + "(\r\n";
-				ResultSet t = s.executeQuery("SELECT COUNT(*) AS COUNT FROM " + rs.getString("TABLE_NAME"));
+			i=0;
+			
+			
+			
+			while(rs.next()) {	
+				createTableQuery = "CREATE TABLE "+rs.getString("TABLE_NAME")  +"(\r\n";
+				ResultSet t = s.executeQuery("SELECT COUNT(*) AS COUNT FROM "+rs.getString("TABLE_NAME"));
 				t.next();
-				ResultSet r = s.executeQuery("SELECT * FROM " + rs.getString("TABLE_NAME"));
+				ResultSet r = s.executeQuery("SELECT * FROM "+rs.getString("TABLE_NAME"));
 				ResultSetMetaData l = r.getMetaData();
 				int columnCount = l.getColumnCount();
 				int taille = t.getInt("COUNT");
-				for (int j = 1; j < columnCount + 1; j++) {
-
-					columnName = l.getColumnName(j);
-					createTableQuery = createTableQuery + "    " + columnName + " ";
-
-					switch (l.getColumnType(j)) {
-					case 4:
-						createTableQuery = createTableQuery + "INT NOT NULL,\r\n";
-						break;
-					case 12:
-						createTableQuery = createTableQuery + "VARCHAR ( 50 ) NOT NULL,\r\n";
-						break;
-					case 16:
-						createTableQuery = createTableQuery + "BOOLEAN NOT NULL,\r\n";
-						break;
-					case -5:
-						createTableQuery = createTableQuery + "BIGINT NOT NULL,\r\n";
-						break;
-					default:
-						// code block
+				ResultSet rs1= metaData.getTables(null, null,rs.getString("TABLE_NAME"), new String[]{"TABLE"});
+				rs1=metaData.getPrimaryKeys(null, null,rs.getString("TABLE_NAME"));
+				while(rs1.next()) {
+					   primary.add(rs1.getString(4));	   
 					}
+			for (int j = 1; j < columnCount + 1; j++) {
+				
+				columnName = l.getColumnName(j);
+				createTableQuery = createTableQuery + "    " + columnName + " ";
+				switch (l.getColumnType(j)) {
+				case 4:
+					createTableQuery = createTableQuery + "INT NOT NULL,\r\n";
+					break;
+				case 12:
+					createTableQuery = createTableQuery + "VARCHAR ( 50 ) NOT NULL,\r\n";
+					break;
+				case 16:
+					createTableQuery = createTableQuery + "BOOLEAN NOT NULL,\r\n";
+					break;
+				case -5:
+					createTableQuery = createTableQuery + "BIGINT NOT NULL,\r\n";
+					break;
+				default:
+					// code block
 				}
-
-				createTableQuery = createTableQuery + ");";
-				System.out.println(createTableQuery);
+			}
+				
+			createTableQuery = createTableQuery +"    PRIMARY KEY (" + primary.get(i) + ")";
+			createTableQuery = createTableQuery + "\n);";
+			System.out.println(createTableQuery);
+			i++;
 			}
 			s.close();
 			cd.close();
@@ -104,5 +115,6 @@ public class Application {
 		}
 		// -----------------------
 		scan.close();
+
 	}
 }
