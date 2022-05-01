@@ -50,7 +50,7 @@ public class Application {
 		String columnName = null, createDbQuery = "CREATE DATABASE IF NOT EXISTS DB1;";
 		String createTableQuery;
 
-		// Connection avec la base de donnée access
+		// Connection avec la base de donnÃ©e access
 		try {
 			ArrayList<String> primary = new ArrayList<String>();
 			int i = 0;
