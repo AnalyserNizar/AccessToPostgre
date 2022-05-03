@@ -7,10 +7,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class FileChooser {
 	public static String dBurlString = "";
-	
-	 public String getUrl() {
-	     return FileChooser.dBurlString;
-	  }
+
+	public String getUrl() {
+		return FileChooser.dBurlString;
+	}
 
 	public static JFileChooser createFilePicker() {
 		JFileChooser chooser = new JFileChooser();
@@ -27,5 +27,4 @@ public class FileChooser {
 		return chooser;
 	}
 
-	 
 }

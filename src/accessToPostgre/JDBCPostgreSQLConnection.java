@@ -5,8 +5,8 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 
 public class JDBCPostgreSQLConnection {
+
 	public JDBCPostgreSQLConnection() {
-		// TODO Auto-generated constructor stub
 		try {
 			// connection a postgresql
 			System.out.println("Connecting to database...");
@@ -18,6 +18,6 @@ public class JDBCPostgreSQLConnection {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-	}
 
+	}
 }

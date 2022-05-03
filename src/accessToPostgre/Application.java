@@ -27,17 +27,15 @@ import java.io.IOException;
 public class Application {
 
 	public static void main(String[] args) {
-		Scanner scan = new Scanner(System.in);
-		
-		LookAndFeel style = new LookAndFeel();
-		
-		JFileChooser chooser = FileChooser.createFilePicker();
-		
-		JDBCMicrosoftAccessConnection connect = new JDBCMicrosoftAccessConnection(chooser);
-		
-		JDBCPostgreSQLConnection  connect2 = new JDBCPostgreSQLConnection();
 
-		
+		LookAndFeel style = new LookAndFeel();
+
+		JFileChooser chooser = FileChooser.createFilePicker();
+
+		JDBCMicrosoftAccessConnection connect = new JDBCMicrosoftAccessConnection(chooser);
+
+		JDBCPostgreSQLConnection connect2 = new JDBCPostgreSQLConnection();
+
 		System.out.println("end of program");
 
 	}

@@ -17,15 +17,14 @@ import java.io.File;
 public class JDBCMicrosoftAccessConnection {
 	Scanner scan = new Scanner(System.in);
 	public String columnName = "";
-	public static  String createDbQuery = "CREATE DATABASE DB1;";
+	public static String createDbQuery = "CREATE DATABASE DB1;";
 	public static String createTableQuery = "";
-	public int columnCount=0;
-	public int taille=0;
+	public int columnCount = 0;
+	public int taille = 0;
 	public FileChooser chooser;
 
-	public JDBCMicrosoftAccessConnection (JFileChooser chooser) {
-	
-		
+	public JDBCMicrosoftAccessConnection(JFileChooser chooser) {
+
 		this.columnName = "";
 
 		// TODO Auto-generated constructor stub
