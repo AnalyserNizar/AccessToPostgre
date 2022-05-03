@@ -23,7 +23,7 @@ public class JDBCMicrosoftAccessConnection {
 		String createDbQuery = "CREATE DATABASE DB1;";
 		String createTableQuery = "";
 		try {
-			
+			ArrayList<String> primary = new ArrayList<String>();
 			int i = 0;
 			String DBurl=null;
 			Connection cd = DriverManager.getConnection(DBurl);
@@ -46,9 +46,9 @@ public class JDBCMicrosoftAccessConnection {
 				ResultSet rs1 = metaData.getTables(null, null, rs.getString("TABLE_NAME"), new String[] { "TABLE" });
 				rs1 = metaData.getPrimaryKeys(null, null, rs.getString("TABLE_NAME"));
 
-				while (rs1.next()) {
-					primary.add(rs1.getString(4));
-				}
+				while(rs1.next()) {
+					   primary.add(rs1.getString(4));	   
+					}
 				for (int j = 1; j < columnCount + 1; j++) {
 
 					columnName = l.getColumnName(j);
@@ -85,7 +85,7 @@ public class JDBCMicrosoftAccessConnection {
 		}
 		
 		scan.close();
-		 return conn;
+		 return ;
 	} 
 	
 	

@@ -51,18 +51,10 @@ public class Application {
 		String columnName = "";
 		String createDbQuery = "CREATE DATABASE DB1;";
 		String createTableQuery = "";
-	/*	try {
-			// connection a postgresql
-			System.out.println("Connecting to database...");
-			Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost/", "testing", "pfe");
-			Statement st = conn.createStatement();
-			// execution des requetes
-			st.executeUpdate("CREATE DATABASE IF NOT EXISTS DB1");
-		} catch (Exception e) {
-			// TODO: handle exception
-		}*/
+
 		// Connection avec la base de donnée access
 		try {
+			ArrayList<String> primary = new ArrayList<String>();
 			int i = 0;
 			Connection cd = DriverManager.getConnection(DBurl);
 			System.out.println("Connection reussie a la base de donnee");
@@ -83,7 +75,6 @@ public class Application {
 				int taille = t.getInt("COUNT");
 				ResultSet rs1 = metaData.getTables(null, null, rs.getString("TABLE_NAME"), new String[] { "TABLE" });
 				rs1 = metaData.getPrimaryKeys(null, null, rs.getString("TABLE_NAME"));
-string primary ="";
 				while (rs1.next()) {
 					primary.add(rs1.getString(4));
 				}
