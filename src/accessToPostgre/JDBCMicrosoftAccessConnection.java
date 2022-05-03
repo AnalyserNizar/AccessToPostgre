@@ -28,9 +28,15 @@ public class JDBCMicrosoftAccessConnection {
 		this.columnName = "";
 
 		// TODO Auto-generated constructor stub
-		Connection conn = null;
+		
 
 		try {
+			System.out.println("Connecting to database...");
+			System.out.println("entrer le nom du base donnee postgre desirée");
+		    String DBpostgre = scan.next();
+			Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost/","postgres","pfe");
+			Statement st = conn.createStatement();
+			st.executeUpdate("CREATE DATABASE "+DBpostgre);
 			ArrayList<String> primary = new ArrayList<String>();
 			int i = 0;
 			Connection cd = DriverManager.getConnection(FileChooser.dBurlString);
@@ -81,7 +87,7 @@ public class JDBCMicrosoftAccessConnection {
 				this.createTableQuery = createTableQuery + "\n);" + "\n";
 				i++;
 			}
-			System.out.println(createTableQuery);
+			
 
 			s.close();
 			cd.close();
