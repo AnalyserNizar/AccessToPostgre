@@ -36,10 +36,8 @@ public class Application {
 		}
 		// ----------------------------------------
 		// Filtre pour les fichier .accdb
-		JFileChooser chooser = new JFileChooser();
-		String DBurl = null;
-		System.out.println("Choose your db file");
-		JFileChooser yourChooser = FileChooser.createFilePicker();
+ 		String DBurl = null;
+		JFileChooser chooser = FileChooser.createFilePicker();
 		// ^----simplification du code
 
 		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
