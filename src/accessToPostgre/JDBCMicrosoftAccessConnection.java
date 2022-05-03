@@ -16,23 +16,31 @@ import java.io.File;
 
 public class JDBCMicrosoftAccessConnection {
 	Scanner scan = new Scanner(System.in);
-	public JDBCMicrosoftAccessConnection() {
+	public String columnName = "";
+	public static  String createDbQuery = "CREATE DATABASE DB1;";
+	public static String createTableQuery = "";
+	public int columnCount=0;
+	public int taille=0;
+	public FileChooser chooser;
+
+	public JDBCMicrosoftAccessConnection (JFileChooser chooser) {
+	
+		
+		this.columnName = "";
+
 		// TODO Auto-generated constructor stub
 		Connection conn = null;
-		String columnName = "";
-		String createDbQuery = "CREATE DATABASE DB1;";
-		String createTableQuery = "";
+
 		try {
 			ArrayList<String> primary = new ArrayList<String>();
 			int i = 0;
-			String DBurl=null;
-			Connection cd = DriverManager.getConnection(DBurl);
+			Connection cd = DriverManager.getConnection(FileChooser.dBurlString);
 			System.out.println("Connection reussie a la base de donnee");
 			Statement s = cd.createStatement();
 			DatabaseMetaData metaData = cd.getMetaData();
 			ResultSet rs = metaData.getTables(null, null, "%", null);
 
-		//	System.out.println(createDbQuery);
+			// System.out.println(createDbQuery);
 			i = 0;
 
 			while (rs.next()) {
@@ -41,14 +49,13 @@ public class JDBCMicrosoftAccessConnection {
 				t.next();
 				ResultSet r = s.executeQuery("SELECT * FROM " + rs.getString("TABLE_NAME"));
 				ResultSetMetaData l = r.getMetaData();
-				int columnCount = l.getColumnCount();
-				int taille = t.getInt("COUNT");
+				this.columnCount = l.getColumnCount();
+				this.taille = t.getInt("COUNT");
 				ResultSet rs1 = metaData.getTables(null, null, rs.getString("TABLE_NAME"), new String[] { "TABLE" });
 				rs1 = metaData.getPrimaryKeys(null, null, rs.getString("TABLE_NAME"));
-
-				while(rs1.next()) {
-					   primary.add(rs1.getString(4));	   
-					}
+				while (rs1.next()) {
+					primary.add(rs1.getString(4));
+				}
 				for (int j = 1; j < columnCount + 1; j++) {
 
 					columnName = l.getColumnName(j);
@@ -71,8 +78,8 @@ public class JDBCMicrosoftAccessConnection {
 					}
 				}
 
-				createTableQuery = createTableQuery + "    PRIMARY KEY (" + primary.get(i) + ")";
-				createTableQuery = createTableQuery + "\n);"+"\n";
+				this.createTableQuery = createTableQuery + "    PRIMARY KEY (" + primary.get(i) + ")";
+				this.createTableQuery = createTableQuery + "\n);" + "\n";
 				i++;
 			}
 			System.out.println(createTableQuery);
@@ -83,10 +90,8 @@ public class JDBCMicrosoftAccessConnection {
 
 			e.printStackTrace();
 		}
-		
+		// -----------------------
 		scan.close();
-		 return ;
-	} 
-	
-	
+	}
+
 }
