@@ -37,9 +37,8 @@ public class Application {
 		// ----------------------------------------
 		// Filtre pour les fichier .accdb
  		String DBurl = null;
-		JFileChooser chooser = FileChooser.createFilePicker();
-		// ^----simplification du code
-
+ 		
+ 		JFileChooser chooser = FileChooser.createFilePicker();
 		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 			DBurl = "jdbc:ucanaccess://" + chooser.getSelectedFile();
 			System.out.println(DBurl);
