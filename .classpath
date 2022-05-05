@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="libs/hsqldb-2.5.0.jar"/>
 	<classpathentry kind="lib" path="libs/jackcess-3.0.1.jar"/>
 	<classpathentry kind="lib" path="libs/ucanaccess-5.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/postgresql-42.3.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

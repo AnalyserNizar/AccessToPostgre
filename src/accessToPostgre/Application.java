@@ -23,16 +23,19 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
+import java.util.concurrent.TimeUnit; 
 
 public class Application {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException  {
 
 		LookAndFeel style = new LookAndFeel();
 
 		JFileChooser chooser = FileChooser.createFilePicker();
 
 		JDBCMicrosoftAccessConnection connect = new JDBCMicrosoftAccessConnection(chooser);
+	 
 
 		JDBCPostgreSQLConnection connect2 = new JDBCPostgreSQLConnection();
 
