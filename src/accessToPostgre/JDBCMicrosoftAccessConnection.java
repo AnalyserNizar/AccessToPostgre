@@ -48,23 +48,20 @@ public class JDBCMicrosoftAccessConnection {
 
 			while (rs.next()) {
 				createTableQuery += "CREATE TABLE " + rs.getString("TABLE_NAME") + "(\r\n";
-				ResultSet t = s.executeQuery("SELECT COUNT(*) AS COUNT FROM " + rs.getString("TABLE_NAME"));
-				t.next();
+				/*ResultSet t = s.executeQuery("SELECT COUNT(*) AS COUNT FROM " + rs.getString("TABLE_NAME"));
+				t.next();*/
 				ResultSet r = s.executeQuery("SELECT * FROM " + rs.getString("TABLE_NAME"));
 				ResultSetMetaData l = r.getMetaData();
 				this.columnCount = l.getColumnCount();
-				this.taille = t.getInt("COUNT");
-				ResultSet rs1 = metaData.getTables(null, null, rs.getString("TABLE_NAME"), new String[] { "TABLE" });
-				ResultSet rs2 = metaData.getExportedKeys(null, null, rs.getString("TABLE_NAME"));
-				rs1 = metaData.getPrimaryKeys(null, null, rs.getString("TABLE_NAME"));
-				rs2 = metaData.getExportedKeys(null, null, rs.getString("TABLE_NAME"));
+				//this.taille = t.getInt("COUNT");
+				ResultSet rs1 = metaData.getPrimaryKeys(null, null, rs.getString("TABLE_NAME"));
+				
+				
 				while (rs1.next()) {
-					primary.add(rs1.getString(4));
-
+					primary.add(rs1.getString("COLUMN_NAME"));
 				}
-				while (rs2.next()) {
-					fore.add(rs2.getString(4));
-				}
+	
+				
 				for (int j = 1; j < columnCount + 1; j++) {
 
 					columnName = l.getColumnName(j);
@@ -74,7 +71,7 @@ public class JDBCMicrosoftAccessConnection {
 						createTableQuery = createTableQuery + "INT NOT NULL,\r\n";
 						break;
 					case 12:
-						createTableQuery = createTableQuery + "VARCHAR ( 50 ) NOT NULL,\r\n";
+						createTableQuery = createTableQuery + "VARCHAR (50) NOT NULL,\r\n";
 						break;
 					case 16:
 						createTableQuery = createTableQuery + "BOOLEAN NOT NULL,\r\n";
@@ -88,13 +85,16 @@ public class JDBCMicrosoftAccessConnection {
 				}
 
 				this.createTableQuery = createTableQuery + "    PRIMARY KEY (" + primary.get(i) + ")\r\n";
-				// this.createTableQuery = createTableQuery + " SECONDARY KEY (" + fore.get(i) +
-				// ")";
+			
 				this.createTableQuery = createTableQuery + "\n);" + "\n";
 				i++;
+				
 			}
-
+			
+			
 			System.out.println(createTableQuery);
+			ResultSet rs2 = metaData.getExportedKeys(cd.getCatalog(), null, rs.getString("TABLE_NAME"));
+			System.out.println(" FOREIGN KEY (" + rs2.getString("FKCOLUMN_NAME") +")");
 			s.close();
 			cd.close();
 		} catch (SQLException e) {

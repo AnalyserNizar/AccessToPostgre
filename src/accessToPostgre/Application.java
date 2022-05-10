@@ -2,59 +2,48 @@
 package accessToPostgre;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import javax.swing.JFileChooser;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class Application {
+	static Scanner scan = new Scanner(System.in); 
+	public static String username;
+	public static String mdp;
 
 	public static void main(String[] args) throws InterruptedException, SQLException {
 
-		LookAndFeel style = new LookAndFeel();
+		new LookAndFeel();
 
 		JFileChooser chooser = FileChooser.createFilePicker();
-
 		String[] url = FileChooser.dBurlString.split(Pattern.quote(File.separator));
 		String url2 = url[url.length - 1].toString();
 		JDBCMicrosoftAccessConnection.ACCDB = url2.split("[.]")[0];
 		System.out.println(JDBCMicrosoftAccessConnection.ACCDB);
-		System.out.println("Connecting to database...");
-		Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost/", "postgres", "root");
+		System.out.println("entrer votre username postgre");
+		username = scan.next();
+		System.out.println("entrer votre mot de passe postgre");
+		mdp = scan.next();
+		System.out.println("Connection a la base de donnee");
+		Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost/", "postgres", mdp);
 		Statement st = conn.createStatement();
 
-		try {
+		/*try {
 			st.executeUpdate("CREATE DATABASE " + JDBCMicrosoftAccessConnection.ACCDB.toLowerCase() + ";");
 		} finally {
 			st.close();
 			conn.close();
-		}
+		}*/
 
-		JDBCMicrosoftAccessConnection connect = new JDBCMicrosoftAccessConnection(chooser);
+		new JDBCMicrosoftAccessConnection(chooser);
 
-		JDBCPostgreSQLConnection connect2 = new JDBCPostgreSQLConnection();
+		new JDBCPostgreSQLConnection();
 
-		System.out.println("end of program");
+		System.out.println("fin du programme");
 
 	}
 }
