@@ -22,7 +22,7 @@ public class FileChooser {
 			dBurlString = "jdbc:ucanaccess://" + chooser.getSelectedFile();
 			System.out.println(dBurlString);
 		} else {
-			System.out.println("No Selection");
+			System.out.println("Aucune selection");
 		}
 		return chooser;
 	}

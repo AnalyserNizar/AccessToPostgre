@@ -8,13 +8,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
-import javax.swing.UIManager;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.File;
+
 
 public class JDBCMicrosoftAccessConnection {
 	Scanner scan = new Scanner(System.in);
@@ -28,39 +24,41 @@ public class JDBCMicrosoftAccessConnection {
 
 	public JDBCMicrosoftAccessConnection(JFileChooser chooser) throws InterruptedException {
 
-		this.columnName = "";
 
 		// TODO Auto-generated constructor stub
 
 		try {
 
 			ArrayList<String> primary = new ArrayList<String>();
-			ArrayList<String> fore = new ArrayList<String>();
+			//ArrayList<String> fore = new ArrayList<String>();
 			int i = 0;
-
+			
+            //connexion a la base de donnee access
+			
 			Connection cd = DriverManager.getConnection(FileChooser.dBurlString);
 			System.out.println("Connection reussie a la base de donnee");
 			Statement s = cd.createStatement();
 			DatabaseMetaData metaData = cd.getMetaData();
 			ResultSet rs = metaData.getTables(null, null, "%", null);
-
-			// System.out.println(createDbQuery);
-
+			
+			//la creation des requetes sql a partir du BD access
+			
 			while (rs.next()) {
 				createTableQuery += "CREATE TABLE " + rs.getString("TABLE_NAME") + "(\r\n";
-				/*ResultSet t = s.executeQuery("SELECT COUNT(*) AS COUNT FROM " + rs.getString("TABLE_NAME"));
-				t.next();*/
 				ResultSet r = s.executeQuery("SELECT * FROM " + rs.getString("TABLE_NAME"));
 				ResultSetMetaData l = r.getMetaData();
 				this.columnCount = l.getColumnCount();
-				//this.taille = t.getInt("COUNT");
-				ResultSet rs1 = metaData.getPrimaryKeys(null, null, rs.getString("TABLE_NAME"));
 				
+				ResultSet rs1 = metaData.getPrimaryKeys(null, null, rs.getString("TABLE_NAME"));
+				//ResultSet rs2 = metaData.getExportedKeys(cd.getCatalog(), null, rs.getString("TABLE_NAME"));
 				
 				while (rs1.next()) {
 					primary.add(rs1.getString("COLUMN_NAME"));
 				}
-	
+				
+				/*while (rs2.next()) {
+					fore.add(rs2.getString("FKCOLUMN_NAME"));
+				}*/
 				
 				for (int j = 1; j < columnCount + 1; j++) {
 
@@ -84,17 +82,16 @@ public class JDBCMicrosoftAccessConnection {
 					}
 				}
 
-				this.createTableQuery = createTableQuery + "    PRIMARY KEY (" + primary.get(i) + ")\r\n";
+			   createTableQuery = createTableQuery + "    PRIMARY KEY (" + primary.get(i) + ")\r\n";
 			
-				this.createTableQuery = createTableQuery + "\n);" + "\n";
+			  // createTableQuery =createTableQuery + " FOREIGN KEY (" + fore.get(i) +")";
+			   createTableQuery = createTableQuery + "\n);" + "\n";
 				i++;
 				
 			}
-			
-			
 			System.out.println(createTableQuery);
-			ResultSet rs2 = metaData.getExportedKeys(cd.getCatalog(), null, rs.getString("TABLE_NAME"));
-			System.out.println(" FOREIGN KEY (" + rs2.getString("FKCOLUMN_NAME") +")");
+			
+			
 			s.close();
 			cd.close();
 		} catch (SQLException e) {
