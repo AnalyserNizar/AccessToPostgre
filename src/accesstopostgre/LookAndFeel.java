@@ -1,4 +1,4 @@
-package accessToPostgre;
+package accesstopostgre;
 
 import javax.swing.UIManager;
 

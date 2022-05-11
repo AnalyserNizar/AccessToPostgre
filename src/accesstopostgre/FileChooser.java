@@ -1,4 +1,4 @@
-package accessToPostgre;
+package accesstopostgre;
 
 import java.io.File;
 
@@ -18,11 +18,13 @@ public class FileChooser {
 		chooser.setDialogTitle("choosertitle");
 		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.addChoosableFileFilter(new FileNameExtensionFilter("Microsoft Access", "accdb"));
+		chooser.addChoosableFileFilter(new FileNameExtensionFilter("Microsoft Access 2007 and earlier", "accdb"));
 		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 			dBurlString = "jdbc:ucanaccess://" + chooser.getSelectedFile();
 			System.out.println(dBurlString);
 		} else {
 			System.out.println("Aucune selection");
+			System.exit(0);
 		}
 		return chooser;
 	}
