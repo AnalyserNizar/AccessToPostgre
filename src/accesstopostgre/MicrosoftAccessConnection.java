@@ -48,7 +48,7 @@ public class MicrosoftAccessConnection {
 				ResultSet rs1 = metaData.getPrimaryKeys(null, null, rs.getString("TABLE_NAME"));
 				// ResultSet rs2 = metaData.getExportedKeys(cd.getCatalog(), null,
 				// rs.getString("TABLE_NAME"));
-
+				ResultSetMetaData metadata = rs1.getMetaData();
 				while (rs1.next()) {
 					primary.add(rs1.getString("COLUMN_NAME"));
 				}
@@ -58,21 +58,47 @@ public class MicrosoftAccessConnection {
 				 */
 
 				for (int j = 1; j < columnCount + 1; j++) {
+					int nullable = metadata.isNullable(j);
 
 					columnName = l.getColumnName(j);
 					createTableQuery = createTableQuery + "    " + columnName + " ";
 					switch (l.getColumnType(j)) {
 					case 4:
-						createTableQuery = createTableQuery + "INT NOT NULL,\r\n";
+						if (nullable == ResultSetMetaData.columnNoNulls) {
+							createTableQuery = createTableQuery + "INT NOT NULL,\r\n";
+
+						} else /* (nullable == ResultSetMetaData.columnNullable) */ {
+
+							createTableQuery = createTableQuery + "INT ,\r\n";
+						}
+
+						/*
+						 * else if (nullable == ResultSetMetaData.columnNullableUnknown) {
+						 * System.out.println("Nullability unknown."); }
+						 */
 						break;
 					case 12:
-						createTableQuery = createTableQuery + "VARCHAR (50) NOT NULL,\r\n";
+						if (nullable == ResultSetMetaData.columnNoNulls) {
+							createTableQuery = createTableQuery + "VARCHAR (50) NOT NULL,\r\n";
+						} else {
+
+							createTableQuery = createTableQuery + "VARCHAR (50),\r\n";
+						}
 						break;
 					case 16:
-						createTableQuery = createTableQuery + "BOOLEAN NOT NULL,\r\n";
+						if (nullable == ResultSetMetaData.columnNoNulls) {
+							createTableQuery = createTableQuery + "BOOLEAN NOT NULL,\r\n";
+						} else {
+							createTableQuery = createTableQuery + "BOOLEAN,\r\n";
+						}
 						break;
 					case -5:
 						createTableQuery = createTableQuery + "BIGINT NOT NULL,\r\n";
+						if (nullable == ResultSetMetaData.columnNoNulls) {
+							createTableQuery = createTableQuery + "BIGINT NOT NULL,\r\n";
+						} else {
+							createTableQuery = createTableQuery + "BIGINT,\r\n";
+						}
 						break;
 					default:
 						// code block
