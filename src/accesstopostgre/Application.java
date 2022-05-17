@@ -20,9 +20,9 @@ public class Application {
 		// modifier le theme
 		new LookAndFeel();
 		FileChooser.createFilePicker();
-	//	new EmptyPostgresDB();
+		new EmptyPostgresDB();
 		new MicrosoftAccessConnection();
-	//	new PostgreSQLConnection();
+		new PostgreSQLConnection();
 		fin();
 
 	}

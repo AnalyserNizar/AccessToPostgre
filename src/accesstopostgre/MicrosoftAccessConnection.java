@@ -93,11 +93,25 @@ public class MicrosoftAccessConnection {
 						}
 						break;
 					case -5:
-						createTableQuery = createTableQuery + "BIGINT NOT NULL,\r\n";
+					
 						if (nullable == ResultSetMetaData.columnNoNulls) {
 							createTableQuery = createTableQuery + "BIGINT NOT NULL,\r\n";
 						} else {
 							createTableQuery = createTableQuery + "BIGINT,\r\n";
+						}
+						break;
+					case 3:
+						if (nullable == ResultSetMetaData.columnNoNulls) {
+							createTableQuery = createTableQuery + "decimal NOT NULL,\r\n";
+						} else {
+							createTableQuery = createTableQuery + "decimal,\r\n";
+						}
+						break;
+					case 5:
+						if (nullable == ResultSetMetaData.columnNoNulls) {
+							createTableQuery = createTableQuery + "smallint NOT NULL,\r\n";
+						} else {
+							createTableQuery = createTableQuery + "smallint,\r\n";
 						}
 						break;
 					default:
