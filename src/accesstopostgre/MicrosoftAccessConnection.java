@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 import java.util.ArrayList;
-import javax.swing.JFileChooser;
+
 
 public class MicrosoftAccessConnection {
 	Scanner scan = new Scanner(System.in);
@@ -48,7 +48,7 @@ public class MicrosoftAccessConnection {
 				ResultSet rs1 = metaData.getPrimaryKeys(null, null, rs.getString("TABLE_NAME"));
 				// ResultSet rs2 = metaData.getExportedKeys(cd.getCatalog(), null,
 				// rs.getString("TABLE_NAME"));
-				ResultSetMetaData metadata = rs1.getMetaData();
+				ResultSetMetaData metadata = r.getMetaData();
 				while (rs1.next()) {
 					primary.add(rs1.getString("COLUMN_NAME"));
 				}
@@ -58,7 +58,9 @@ public class MicrosoftAccessConnection {
 				 */
 
 				for (int j = 1; j < columnCount + 1; j++) {
-					int nullable = metadata.isNullable(j);
+					 int nullable = metadata.isNullable(j);
+			    	  if(nullable == ResultSetMetaData.columnNullable) System.out.println(" la" +j+  "colonne est null");
+			    	  else System.out.println("la "+j+ " colonne est non null");
 
 					columnName = l.getColumnName(j);
 					createTableQuery = createTableQuery + "    " + columnName + " ";
