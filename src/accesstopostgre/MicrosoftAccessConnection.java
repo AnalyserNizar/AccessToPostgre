@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
 public class MicrosoftAccessConnection {
@@ -25,8 +26,6 @@ public class MicrosoftAccessConnection {
 
 		try {
 
-			ArrayList<String> primary = new ArrayList<String>();
-			// ArrayList<String> fore = new ArrayList<String>();
 			int i = 0;
 
 			// connexion a la base de donnee access
@@ -49,9 +48,7 @@ public class MicrosoftAccessConnection {
 				// ResultSet rs2 = metaData.getExportedKeys(cd.getCatalog(), null,
 				// rs.getString("TABLE_NAME"));
 				ResultSetMetaData metadata = r.getMetaData();
-				while (rs1.next()) {
-					primary.add(rs1.getString("COLUMN_NAME"));
-				}
+				
 
 				/*
 				 * while (rs2.next()) { fore.add(rs2.getString("FKCOLUMN_NAME")); }
@@ -59,9 +56,7 @@ public class MicrosoftAccessConnection {
 
 				for (int j = 1; j < columnCount + 1; j++) {
 					 int nullable = metadata.isNullable(j);
-			    	  if(nullable == ResultSetMetaData.columnNullable) System.out.println(" la" +j+  "colonne est null");
-			    	  else System.out.println("la "+j+ " colonne est non null");
-
+			    	 
 					columnName = l.getColumnName(j);
 					createTableQuery = createTableQuery + "    " + columnName + " ";
 					switch (l.getColumnType(j)) {
@@ -69,7 +64,7 @@ public class MicrosoftAccessConnection {
 						if (nullable == ResultSetMetaData.columnNoNulls) {
 							createTableQuery = createTableQuery + "INT NOT NULL,\r\n";
 
-						} else /* (nullable == ResultSetMetaData.columnNullable) */ {
+						} else {
 
 							createTableQuery = createTableQuery + "INT ,\r\n";
 						}
@@ -111,24 +106,34 @@ public class MicrosoftAccessConnection {
 						break;
 					case 5:
 						if (nullable == ResultSetMetaData.columnNoNulls) {
-							createTableQuery = createTableQuery + "smallint NOT NULL,\r\n";
+							createTableQuery = createTableQuery + "SMALLINT NOT NULL,\r\n";
 						} else {
-							createTableQuery = createTableQuery + "smallint,\r\n";
+							createTableQuery = createTableQuery + "SMALLINT,\r\n";
+						}
+						break;
+					case 2004:
+						if (nullable == ResultSetMetaData.columnNoNulls) {
+						createTableQuery = createTableQuery + "bytea NOT NULL,\r\n";
+						}else {
+						createTableQuery = createTableQuery + "bytea,\r\n";
 						}
 						break;
 					default:
 						// code block
 					}
 				}
-
-				createTableQuery = createTableQuery + "    PRIMARY KEY (" + primary.get(i) + ")\r\n";
-
+				createTableQuery = createTableQuery + "    PRIMARY KEY (" ;
+				while (rs1.next()){
+					createTableQuery = createTableQuery + rs1.getString("COLUMN_NAME") + ",";
+				}
+			
+				createTableQuery = createTableQuery.substring(0, createTableQuery.length() - 1);
 				// createTableQuery =createTableQuery + " FOREIGN KEY (" + fore.get(i) +")";
-				createTableQuery = createTableQuery + "\n);" + "\n";
+				createTableQuery = createTableQuery +  ")\n);" + "\n";
 				i++;
 
 			}
-			System.out.println(createTableQuery);
+			
 
 			s.close();
 			cd.close();

@@ -10,7 +10,6 @@ public class PostgreSQLConnection {
 	public PostgreSQLConnection() {
 		try {
 			// connection au base de donnee postgresql
-			System.out.println("Connection a la base de donnee...");
 			System.out.println(MicrosoftAccessConnection.ACCDB);
 			String url = "jdbc:postgresql://localhost/" + MicrosoftAccessConnection.ACCDB.toLowerCase();
 			Connection conn = DriverManager.getConnection(url, EmptyPostgresDB.username, EmptyPostgresDB.mdp);
