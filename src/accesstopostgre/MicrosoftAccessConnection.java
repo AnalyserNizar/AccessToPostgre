@@ -15,18 +15,34 @@ import java.util.Iterator;
 public class MicrosoftAccessConnection {
 	Scanner scan = new Scanner(System.in);
 	public String columnName = null;
-	public static String createDbQuery = null;
+	public static String createDbQuery = "";
 	public static String createTableQuery = "";
+	public static String addconstraints="";
 	public int columnCount = 0;
 	public int taille = 0;
 	public static String ACCDB = null;
 	public FileChooser chooser;
+	
+	public static String getFKeyData(String tableName, int i) throws SQLException {
+		Connection con;
+		String url = "jdbc:ucanaccess://C:\\Users\\hp\\Desktop\\AccessToPostgre\\Database1.accdb";
+		con = DriverManager.getConnection(url);
+		
+	    DatabaseMetaData dm = con.getMetaData();
+	    ResultSet rs = dm.getImportedKeys(null, null, tableName);
+	    String fkTableData = null;
+		while (rs.next()) {
+	        fkTableData = rs.getString(i);
+	    }
+	    return fkTableData;
+	}
 
 	public MicrosoftAccessConnection() throws InterruptedException {
+		
 
 		try {
 
-			int i = 0;
+			
 
 			// connexion a la base de donnee access
 
@@ -45,15 +61,14 @@ public class MicrosoftAccessConnection {
 				this.columnCount = l.getColumnCount();
 
 				ResultSet rs1 = metaData.getPrimaryKeys(null, null, rs.getString("TABLE_NAME"));
-				// ResultSet rs2 = metaData.getExportedKeys(cd.getCatalog(), null,
-				// rs.getString("TABLE_NAME"));
+				ResultSet rs2 = metaData.getImportedKeys(null, null, rs.getString("TABLE_NAME"));
+				
 				ResultSetMetaData metadata = r.getMetaData();
 				
+				
 
-				/*
-				 * while (rs2.next()) { fore.add(rs2.getString("FKCOLUMN_NAME")); }
-				 */
-
+				
+                 
 				for (int j = 1; j < columnCount + 1; j++) {
 					 int nullable = metadata.isNullable(j);
 			    	 
@@ -68,11 +83,6 @@ public class MicrosoftAccessConnection {
 
 							createTableQuery = createTableQuery + "INT ,\r\n";
 						}
-
-						/*
-						 * else if (nullable == ResultSetMetaData.columnNullableUnknown) {
-						 * System.out.println("Nullability unknown."); }
-						 */
 						break;
 					case 12:
 						if (nullable == ResultSetMetaData.columnNoNulls) {
@@ -122,14 +132,30 @@ public class MicrosoftAccessConnection {
 						// code block
 					}
 				}
-				createTableQuery = createTableQuery + "    PRIMARY KEY (" ;
-				while (rs1.next()){
+				//cle primaire
+				
+				int i = 0;
+				while(rs1.next()){
+					if(i<1) {
+						createTableQuery = createTableQuery + "    PRIMARY KEY(" ;
+					}
 					createTableQuery = createTableQuery + rs1.getString("COLUMN_NAME") + ",";
+					i++;
 				}
-			
 				createTableQuery = createTableQuery.substring(0, createTableQuery.length() - 1);
-				// createTableQuery =createTableQuery + " FOREIGN KEY (" + fore.get(i) +")";
-				createTableQuery = createTableQuery +  ")\n);" + "\n";
+				createTableQuery = createTableQuery + ")\n";
+				
+			   //cle etrangere
+               while(rs2.next()) {
+            	addconstraints = addconstraints + "ALTER TABLE " + rs.getString("TABLE_NAME"); 
+				addconstraints = addconstraints	 + "\nADD CONSTRAINT fk_"+ rs2.getString("PKTABLE_NAME") +" FOREIGN KEY("+rs2.getString("FKCOLUMN_NAME")+ ") REFERENCES "+rs2.getString("PKTABLE_NAME")+"("+rs2.getString("PKCOLUMN_NAME")+");";
+				if(rs2.getShort("UPDATE_RULE") == 0 || rs2.getShort("UPDATE_RULE") == 0) {
+					System.out.println(rs2.getShort("UPDATE_RULE")+","+rs2.getShort("UPDATE_RULE") );
+				addconstraints = addconstraints.substring(0, addconstraints.length() - 1);
+				addconstraints = addconstraints + "\nON DELETE CASCADE\nON UPDATE CASCADE;";
+				}
+               }
+				createTableQuery = createTableQuery +  "\n);" + "\n";
 				i++;
 
 			}
