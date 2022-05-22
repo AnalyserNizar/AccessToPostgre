@@ -17,6 +17,7 @@ public class PostgreSQLConnection {
 			// execution des requetes
 			st.executeUpdate(MicrosoftAccessConnection.createTableQuery);
 			st.executeUpdate(MicrosoftAccessConnection.addconstraints);
+			st.executeUpdate(MicrosoftAccessConnection.insertInto);
 			System.out.println(MicrosoftAccessConnection.createTableQuery);
 			System.out.println(MicrosoftAccessConnection.addconstraints);
 

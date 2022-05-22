@@ -16,6 +16,7 @@ public class MicrosoftAccessConnection {
 	public String columnName = null;
 	public static String createDbQuery = "";
 	public static String createTableQuery = "";
+	public static String insertInto = "";
 	public static String addconstraints = "";
 	public int columnCount = 0;
 	public int taille = 0;
@@ -51,7 +52,9 @@ public class MicrosoftAccessConnection {
 			// la creation des requetes sql a partir du BD access
 
 			while (rs.next()) {
+
 				createTableQuery += "CREATE TABLE " + rs.getString("TABLE_NAME") + "(\r\n";
+
 				ResultSet r = s.executeQuery("SELECT * FROM " + rs.getString("TABLE_NAME"));
 				ResultSetMetaData l = r.getMetaData();
 				this.columnCount = l.getColumnCount();
@@ -60,12 +63,60 @@ public class MicrosoftAccessConnection {
 				ResultSet rs2 = metaData.getImportedKeys(null, null, rs.getString("TABLE_NAME"));
 
 				ResultSetMetaData metadata = r.getMetaData();
+				insertInto += "INSERT INTO " + rs.getString("TABLE_NAME");
+				for (int j = 1; j < columnCount + 1; j++) {
+					if (j == 1) {
+						insertInto += "(";
+					}
+
+					insertInto += l.getColumnName(j);
+					if (j < columnCount) {
+						insertInto += ",";
+					}
+				}
+				insertInto += ")\r\n" + "VALUES ";
+				int cmp = 0;
+				while (r.next()) {// ligne par ligne
+					insertInto += "(";
+					cmp++;
+					int j = 1;
+					for (j = 1; j < columnCount + 1; j++) {// collumn par collumn
+						switch (l.getColumnType(j)) {
+						case 4:
+							insertInto += r.getInt(j);
+							if (j < columnCount) {
+								insertInto += ",";
+							}
+							break;
+						case 2004:
+							insertInto += "'" + r.getBlob(j) + "'";
+							if (j < columnCount) {
+								insertInto += ",";
+							}
+							break;
+						default:
+							insertInto += "'" + r.getString(j) + "'";
+							if (j < columnCount) {
+								insertInto += ",";
+							}
+						}
+					}
+
+					insertInto += "),\n";
+
+				}
+				if (cmp > 0) {
+					insertInto = insertInto.substring(0, insertInto.length() - 2);
+				}
+
+				insertInto += ";\n";
 
 				for (int j = 1; j < columnCount + 1; j++) {
 					int nullable = metadata.isNullable(j);
 
 					columnName = l.getColumnName(j);
 					createTableQuery = createTableQuery + "    " + columnName + " ";
+
 					switch (l.getColumnType(j)) {
 					case 4:
 						if (nullable == ResultSetMetaData.columnNoNulls) {
@@ -75,6 +126,7 @@ public class MicrosoftAccessConnection {
 
 							createTableQuery = createTableQuery + "INT,\r\n";
 						}
+
 						break;
 					case 12:
 						if (l.getColumnDisplaySize(j) > 255) {
@@ -151,6 +203,7 @@ public class MicrosoftAccessConnection {
 						break;
 					default:
 					}
+
 				}
 				// cle primaire
 
@@ -171,9 +224,8 @@ public class MicrosoftAccessConnection {
 				if (i >= 1) {
 
 					createTableQuery = createTableQuery + ")";
-				}
-				else {
-					createTableQuery = createTableQuery.substring(0, createTableQuery.length()-3);
+				} else {
+					createTableQuery = createTableQuery.substring(0, createTableQuery.length() - 3);
 				}
 				// cle etrangere
 				while (rs2.next()) {
@@ -192,7 +244,7 @@ public class MicrosoftAccessConnection {
 				i++;
 
 			}
-
+			System.out.println(insertInto);
 			s.close();
 			cd.close();
 		} catch (SQLException e) {
