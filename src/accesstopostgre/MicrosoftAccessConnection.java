@@ -63,20 +63,25 @@ public class MicrosoftAccessConnection {
 				ResultSet rs2 = metaData.getImportedKeys(null, null, rs.getString("TABLE_NAME"));
 
 				ResultSetMetaData metadata = r.getMetaData();
-				insertInto += "INSERT INTO " + rs.getString("TABLE_NAME");
-				for (int j = 1; j < columnCount + 1; j++) {
-					if (j == 1) {
-						insertInto += "(";
-					}
-
-					insertInto += l.getColumnName(j);
-					if (j < columnCount) {
-						insertInto += ",";
-					}
-				}
-				insertInto += ")\r\n" + "VALUES ";
+				boolean bool = true;
 				int cmp = 0;
-				while (r.next()) {// ligne par ligne
+				while (r.next()) {
+					if (bool) {
+						insertInto += "INSERT INTO " + rs.getString("TABLE_NAME");
+						for (int j = 1; j < columnCount + 1; j++) {
+							if (j == 1) {
+								insertInto += "(";
+							}
+
+							insertInto += l.getColumnName(j);
+							if (j < columnCount) {
+								insertInto += ",";
+							}
+						}
+						insertInto += ")\r\n" + "VALUES ";
+						bool = false;
+					}
+					// ligne par ligne
 					insertInto += "(";
 					cmp++;
 					int j = 1;
@@ -110,6 +115,7 @@ public class MicrosoftAccessConnection {
 				}
 
 				insertInto += ";\n";
+				bool = true;
 
 				for (int j = 1; j < columnCount + 1; j++) {
 					int nullable = metadata.isNullable(j);
