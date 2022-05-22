@@ -18,7 +18,7 @@ public class FileChooser {
 		chooser.setDialogTitle("choosertitle");
 		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.addChoosableFileFilter(new FileNameExtensionFilter("Microsoft Access", "accdb"));
-		chooser.addChoosableFileFilter(new FileNameExtensionFilter("Microsoft Access 2007 and earlier", "accdb"));
+		chooser.addChoosableFileFilter(new FileNameExtensionFilter("Microsoft Access 2007 and earlier", "mdb"));
 		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 			dBurlString = "jdbc:ucanaccess://" + chooser.getSelectedFile();
 			System.out.println(dBurlString);
