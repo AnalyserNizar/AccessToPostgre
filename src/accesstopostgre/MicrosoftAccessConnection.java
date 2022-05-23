@@ -9,8 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.Iterator;
+
 
 public class MicrosoftAccessConnection {
 	Scanner scan = new Scanner(System.in);
@@ -59,12 +58,11 @@ public class MicrosoftAccessConnection {
 				ResultSet R_listcolumns = stat.executeQuery("SELECT * FROM " + R_table.getString("TABLE_NAME"));
 				ResultSetMetaData listcolumns_meta = R_listcolumns.getMetaData();
 				columnCount = listcolumns_meta.getColumnCount();
-
 				ResultSet R_PK = metaData.getPrimaryKeys(null, null, R_table.getString("TABLE_NAME"));
 				ResultSet R_FK = metaData.getImportedKeys(null, null, R_table.getString("TABLE_NAME"));
-				
 				boolean bool = true;
 				int cmp = 0;
+				
 				while (R_listcolumns.next()) {
 					if (bool) {
 						insertInto += "INSERT INTO " + R_table.getString("TABLE_NAME");
@@ -144,14 +142,14 @@ public class MicrosoftAccessConnection {
 							}
 						}
 					}
-
+                   
 					insertInto += "),\n";
 
 				}
 				if (cmp > 0) {
-					insertInto = insertInto.substring(0, insertInto.length() - 1);
+					insertInto = insertInto.substring(0, insertInto.length() - 2);
 				}
-
+                if(bool == false)
 				insertInto += ";\n";
 				bool = true;
 
