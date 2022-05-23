@@ -10,7 +10,6 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Scanner;
 
-
 public class MicrosoftAccessConnection {
 	Scanner scan = new Scanner(System.in);
 	public String columnName = null;
@@ -62,7 +61,7 @@ public class MicrosoftAccessConnection {
 				ResultSet R_FK = metaData.getImportedKeys(null, null, R_table.getString("TABLE_NAME"));
 				boolean bool = true;
 				int cmp = 0;
-				
+
 				while (R_listcolumns.next()) {
 					if (bool) {
 						insertInto += "INSERT INTO " + R_table.getString("TABLE_NAME");
@@ -98,11 +97,11 @@ public class MicrosoftAccessConnection {
 							}
 							break;
 						case 2:
-						insertInto += R_listcolumns.getBigDecimal(j);
-						if (j < columnCount) {
-							insertInto += ",";
-						}
-						break;
+							insertInto += R_listcolumns.getBigDecimal(j);
+							if (j < columnCount) {
+								insertInto += ",";
+							}
+							break;
 						case 91:
 							insertInto += R_listcolumns.getDate(j);
 							if (j < columnCount) {
@@ -110,20 +109,20 @@ public class MicrosoftAccessConnection {
 							}
 							break;
 						case 93:
-							Timestamp date = R_listcolumns.getTimestamp(j); 
-							if(!R_listcolumns.wasNull()) {
-							insertInto += "'" + date ;
-							insertInto = insertInto.substring(0,insertInto.length() -2);
-							insertInto += "'";
-							}else {
-								insertInto += date ;
+							Timestamp date = R_listcolumns.getTimestamp(j);
+							if (!R_listcolumns.wasNull()) {
+								insertInto += "'" + date;
+								insertInto = insertInto.substring(0, insertInto.length() - 2);
+								insertInto += "'";
+							} else {
+								insertInto += date;
 							}
 							if (j < columnCount) {
 								insertInto += ",";
 							}
-							
+
 							break;
-							case 2004:
+						case 2004:
 							insertInto += "'" + R_listcolumns.getBlob(j) + "'";
 							if (j < columnCount) {
 								insertInto += ",";
@@ -142,15 +141,16 @@ public class MicrosoftAccessConnection {
 							}
 						}
 					}
-                   
+
 					insertInto += "),\n";
 
 				}
 				if (cmp > 0) {
 					insertInto = insertInto.substring(0, insertInto.length() - 2);
 				}
-                if(bool == false)
-				insertInto += ";\n";
+				if (bool == false) {
+					insertInto += ";\n";
+				}
 				bool = true;
 
 				for (int j = 1; j < columnCount + 1; j++) {
@@ -180,7 +180,8 @@ public class MicrosoftAccessConnection {
 							createTableQuery = createTableQuery + "VARCHAR (" + listcolumns_meta.getColumnDisplaySize(j)
 									+ ") NOT NULL,\r\n";
 						} else {
-							createTableQuery = createTableQuery + "VARCHAR (" + listcolumns_meta.getColumnDisplaySize(j) + "),\r\n";
+							createTableQuery = createTableQuery + "VARCHAR (" + listcolumns_meta.getColumnDisplaySize(j)
+									+ "),\r\n";
 
 						}
 						break;
@@ -298,7 +299,7 @@ public class MicrosoftAccessConnection {
 				i++;
 
 			}
-			
+
 			stat.close();
 			con.close();
 		} catch (SQLException e) {
