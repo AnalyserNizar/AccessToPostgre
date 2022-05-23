@@ -1,2 +1,2 @@
 # AccessToPostgre
- An application to convert your local Microsoft Access DataBase to PostgreSQL
+A Data Migration tool from Microsoft Access DataBase to PostgreSQL
