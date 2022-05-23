@@ -19,10 +19,8 @@ public class PostgreSQLConnection {
 			System.out.println(MicrosoftAccessConnection.addconstraints);
 			System.out.println(MicrosoftAccessConnection.insertInto);
 			st.executeUpdate(MicrosoftAccessConnection.createTableQuery);
-			st.executeUpdate(MicrosoftAccessConnection.addconstraints);
 			st.executeUpdate(MicrosoftAccessConnection.insertInto);
-			
-
+			st.executeUpdate(MicrosoftAccessConnection.addconstraints);
 		} catch (SQLException e) {
 			System.out.println("connexion postgre échoué");
 			e.printStackTrace();
