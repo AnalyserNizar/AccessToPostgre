@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -43,37 +44,36 @@ public class MicrosoftAccessConnection {
 
 			// connexion a la base de donnee access
 
-			Connection cd = DriverManager.getConnection(FileChooser.dBurlString);
+			Connection con = DriverManager.getConnection(FileChooser.dBurlString);
 			System.out.println("Connection reussie a la base de donnee");
-			Statement s = cd.createStatement();
-			DatabaseMetaData metaData = cd.getMetaData();
-			ResultSet rs = metaData.getTables(null, null, "%", null);
+			Statement stat = con.createStatement();
+			DatabaseMetaData metaData = con.getMetaData();
+			ResultSet R_table = metaData.getTables(null, null, "%", null);
 
 			// la creation des requetes sql a partir du BD access
 
-			while (rs.next()) {
+			while (R_table.next()) {
 
-				createTableQuery += "CREATE TABLE " + rs.getString("TABLE_NAME") + "(\r\n";
+				createTableQuery += "CREATE TABLE " + R_table.getString("TABLE_NAME") + "(\r\n";
 
-				ResultSet r = s.executeQuery("SELECT * FROM " + rs.getString("TABLE_NAME"));
-				ResultSetMetaData l = r.getMetaData();
-				this.columnCount = l.getColumnCount();
+				ResultSet R_listcolumns = stat.executeQuery("SELECT * FROM " + R_table.getString("TABLE_NAME"));
+				ResultSetMetaData listcolumns_meta = R_listcolumns.getMetaData();
+				columnCount = listcolumns_meta.getColumnCount();
 
-				ResultSet rs1 = metaData.getPrimaryKeys(null, null, rs.getString("TABLE_NAME"));
-				ResultSet rs2 = metaData.getImportedKeys(null, null, rs.getString("TABLE_NAME"));
-
-				ResultSetMetaData metadata = r.getMetaData();
+				ResultSet R_PK = metaData.getPrimaryKeys(null, null, R_table.getString("TABLE_NAME"));
+				ResultSet R_FK = metaData.getImportedKeys(null, null, R_table.getString("TABLE_NAME"));
+				
 				boolean bool = true;
 				int cmp = 0;
-				while (r.next()) {
+				while (R_listcolumns.next()) {
 					if (bool) {
-						insertInto += "INSERT INTO " + rs.getString("TABLE_NAME");
+						insertInto += "INSERT INTO " + R_table.getString("TABLE_NAME");
 						for (int j = 1; j < columnCount + 1; j++) {
 							if (j == 1) {
 								insertInto += "(";
 							}
 
-							insertInto += l.getColumnName(j);
+							insertInto += listcolumns_meta.getColumnName(j);
 							if (j < columnCount) {
 								insertInto += ",";
 							}
@@ -86,21 +86,59 @@ public class MicrosoftAccessConnection {
 					cmp++;
 					int j = 1;
 					for (j = 1; j < columnCount + 1; j++) {// collumn par collumn
-						switch (l.getColumnType(j)) {
+						switch (listcolumns_meta.getColumnType(j)) {
 						case 4:
-							insertInto += r.getInt(j);
+							insertInto += R_listcolumns.getInt(j);
 							if (j < columnCount) {
 								insertInto += ",";
 							}
 							break;
-						case 2004:
-							insertInto += "'" + r.getBlob(j) + "'";
+						case 3:
+							insertInto += R_listcolumns.getBigDecimal(j);
+							if (j < columnCount) {
+								insertInto += ",";
+							}
+							break;
+						case 2:
+						insertInto += R_listcolumns.getBigDecimal(j);
+						if (j < columnCount) {
+							insertInto += ",";
+						}
+						break;
+						case 91:
+							insertInto += R_listcolumns.getDate(j);
+							if (j < columnCount) {
+								insertInto += ",";
+							}
+							break;
+						case 93:
+							Timestamp date = R_listcolumns.getTimestamp(j); 
+							if(!R_listcolumns.wasNull()) {
+							insertInto += "'" + date ;
+							insertInto = insertInto.substring(0,insertInto.length() -2);
+							insertInto += "'";
+							}else {
+								insertInto += date ;
+							}
+							if (j < columnCount) {
+								insertInto += ",";
+							}
+							
+							break;
+							case 2004:
+							insertInto += "'" + R_listcolumns.getBlob(j) + "'";
+							if (j < columnCount) {
+								insertInto += ",";
+							}
+							break;
+						case 16:
+							insertInto += R_listcolumns.getBoolean(j);
 							if (j < columnCount) {
 								insertInto += ",";
 							}
 							break;
 						default:
-							insertInto += "'" + r.getString(j) + "'";
+							insertInto += "'" + R_listcolumns.getString(j) + "'";
 							if (j < columnCount) {
 								insertInto += ",";
 							}
@@ -111,19 +149,19 @@ public class MicrosoftAccessConnection {
 
 				}
 				if (cmp > 0) {
-					insertInto = insertInto.substring(0, insertInto.length() - 2);
+					insertInto = insertInto.substring(0, insertInto.length() - 1);
 				}
 
 				insertInto += ";\n";
 				bool = true;
 
 				for (int j = 1; j < columnCount + 1; j++) {
-					int nullable = metadata.isNullable(j);
+					int nullable = listcolumns_meta.isNullable(j);
 
-					columnName = l.getColumnName(j);
+					columnName = listcolumns_meta.getColumnName(j);
 					createTableQuery = createTableQuery + "    " + columnName + " ";
 
-					switch (l.getColumnType(j)) {
+					switch (listcolumns_meta.getColumnType(j)) {
 					case 4:
 						if (nullable == ResultSetMetaData.columnNoNulls) {
 							createTableQuery = createTableQuery + "INT NOT NULL,\r\n";
@@ -132,23 +170,21 @@ public class MicrosoftAccessConnection {
 
 							createTableQuery = createTableQuery + "INT,\r\n";
 						}
-
 						break;
 					case 12:
-						if (l.getColumnDisplaySize(j) > 255) {
+						if (listcolumns_meta.getColumnDisplaySize(j) > 255) {
 							if (nullable == ResultSetMetaData.columnNoNulls) {
 								createTableQuery = createTableQuery + "TEXT NOT NULL,\r\n";
 							} else {
 								createTableQuery = createTableQuery + "TEXT,\r\n";
 							}
 						} else if (nullable == ResultSetMetaData.columnNoNulls) {
-							createTableQuery = createTableQuery + "VARCHAR (" + l.getColumnDisplaySize(j)
+							createTableQuery = createTableQuery + "VARCHAR (" + listcolumns_meta.getColumnDisplaySize(j)
 									+ ") NOT NULL,\r\n";
 						} else {
-							createTableQuery = createTableQuery + "VARCHAR (" + l.getColumnDisplaySize(j) + "),\r\n";
+							createTableQuery = createTableQuery + "VARCHAR (" + listcolumns_meta.getColumnDisplaySize(j) + "),\r\n";
 
 						}
-
 						break;
 					case 16:
 						if (nullable == ResultSetMetaData.columnNoNulls) {
@@ -167,7 +203,7 @@ public class MicrosoftAccessConnection {
 						break;
 
 					case 3:
-						if (l.isCurrency(j)) {
+						if (listcolumns_meta.isCurrency(j)) {
 							if (nullable == ResultSetMetaData.columnNoNulls) {
 								createTableQuery = createTableQuery + "MONEY NOT NULL,\r\n";
 							} else {
@@ -200,11 +236,25 @@ public class MicrosoftAccessConnection {
 							createTableQuery = createTableQuery + "TIMESTAMP,\r\n";
 						}
 						break;
+					case 2014:
+						if (nullable == ResultSetMetaData.columnNoNulls) {
+							createTableQuery = createTableQuery + "TIMESTAMPTZ NOT NULL,\r\n";
+						} else {
+							createTableQuery = createTableQuery + "TIMESTAMPTZ,\r\n";
+						}
+						break;
 					case 2004:
 						if (nullable == ResultSetMetaData.columnNoNulls) {
 							createTableQuery = createTableQuery + "BYTEA NOT NULL,\r\n";
 						} else {
 							createTableQuery = createTableQuery + "BYTEA,\r\n";
+						}
+						break;
+					case 92:
+						if (nullable == ResultSetMetaData.columnNoNulls) {
+							createTableQuery = createTableQuery + "TIME NOT NULL,\r\n";
+						} else {
+							createTableQuery = createTableQuery + "TIME,\r\n";
 						}
 						break;
 					default:
@@ -214,7 +264,7 @@ public class MicrosoftAccessConnection {
 				// cle primaire
 
 				int i = 0;
-				while (rs1.next()) {
+				while (R_PK.next()) {
 					if (i < 1) {
 						createTableQuery = createTableQuery + "    PRIMARY KEY(";
 					}
@@ -222,7 +272,7 @@ public class MicrosoftAccessConnection {
 						createTableQuery = createTableQuery + ",";
 					}
 					if (i >= 0) {
-						createTableQuery = createTableQuery + rs1.getString("COLUMN_NAME");
+						createTableQuery = createTableQuery + R_PK.getString("COLUMN_NAME");
 					}
 					i++;
 				}
@@ -234,12 +284,12 @@ public class MicrosoftAccessConnection {
 					createTableQuery = createTableQuery.substring(0, createTableQuery.length() - 3);
 				}
 				// cle etrangere
-				while (rs2.next()) {
-					addconstraints = addconstraints + "\nALTER TABLE " + rs.getString("TABLE_NAME");
-					addconstraints = addconstraints + "\nADD CONSTRAINT fk_" + rs2.getString("PKTABLE_NAME")
-							+ " FOREIGN KEY(" + rs2.getString("FKCOLUMN_NAME") + ") REFERENCES "
-							+ rs2.getString("PKTABLE_NAME") + "(" + rs2.getString("PKCOLUMN_NAME") + ");";
-					if (rs2.getShort("UPDATE_RULE") == 0 || rs2.getShort("UPDATE_RULE") == 0) {
+				while (R_FK.next()) {
+					addconstraints = addconstraints + "\nALTER TABLE " + R_table.getString("TABLE_NAME");
+					addconstraints = addconstraints + "\nADD CONSTRAINT fk_" + R_FK.getString("PKTABLE_NAME")
+							+ " FOREIGN KEY(" + R_FK.getString("FKCOLUMN_NAME") + ") REFERENCES "
+							+ R_FK.getString("PKTABLE_NAME") + "(" + R_FK.getString("PKCOLUMN_NAME") + ");";
+					if (R_FK.getShort("UPDATE_RULE") == 0 || R_FK.getShort("UPDATE_RULE") == 0) {
 
 						addconstraints = addconstraints.substring(0, addconstraints.length() - 1);
 						addconstraints = addconstraints + "\nON DELETE CASCADE\nON UPDATE CASCADE;";
@@ -250,9 +300,9 @@ public class MicrosoftAccessConnection {
 				i++;
 
 			}
-			System.out.println(insertInto);
-			s.close();
-			cd.close();
+			
+			stat.close();
+			con.close();
 		} catch (SQLException e) {
 
 			e.printStackTrace();

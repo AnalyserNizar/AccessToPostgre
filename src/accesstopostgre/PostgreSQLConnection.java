@@ -15,11 +15,13 @@ public class PostgreSQLConnection {
 			Connection conn = DriverManager.getConnection(url, EmptyPostgresDB.username, EmptyPostgresDB.mdp);
 			Statement st = conn.createStatement();
 			// execution des requetes
+			System.out.println(MicrosoftAccessConnection.createTableQuery);
+			System.out.println(MicrosoftAccessConnection.addconstraints);
+			System.out.println(MicrosoftAccessConnection.insertInto);
 			st.executeUpdate(MicrosoftAccessConnection.createTableQuery);
 			st.executeUpdate(MicrosoftAccessConnection.addconstraints);
 			st.executeUpdate(MicrosoftAccessConnection.insertInto);
-			System.out.println(MicrosoftAccessConnection.createTableQuery);
-			System.out.println(MicrosoftAccessConnection.addconstraints);
+			
 
 		} catch (SQLException e) {
 			System.out.println("connexion postgre échoué");
