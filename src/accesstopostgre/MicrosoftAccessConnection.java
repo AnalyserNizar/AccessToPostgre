@@ -53,7 +53,7 @@ public class MicrosoftAccessConnection {
 
 			while (R_table.next()) {
 
-				createTableQuery += "CREATE TABLE " + R_table.getString("TABLE_NAME") + "(\r\n";
+				createTableQuery += "\nCREATE TABLE " + R_table.getString("TABLE_NAME") + "(\r\n";
 
 				ResultSet R_listcolumns = stat.executeQuery("SELECT * FROM " + R_table.getString("TABLE_NAME"));
 				ResultSetMetaData listcolumns_meta = R_listcolumns.getMetaData();
@@ -65,7 +65,7 @@ public class MicrosoftAccessConnection {
 				
 				while (R_listcolumns.next()) {
 					if (bool) {
-						insertInto += "INSERT INTO " + R_table.getString("TABLE_NAME");
+						insertInto += "\nINSERT INTO " + R_table.getString("TABLE_NAME");
 						for (int j = 1; j < columnCount + 1; j++) {
 							if (j == 1) {
 								insertInto += "(";
@@ -136,7 +136,9 @@ public class MicrosoftAccessConnection {
 							}
 							break;
 						default:
-							insertInto += "'" + R_listcolumns.getString(j) + "'";
+							String str = R_listcolumns.getString(j) ;
+							str = str.replace("'", " ");
+							insertInto += "'" + str +"'";
 							if (j < columnCount) {
 								insertInto += ",";
 							}
@@ -283,7 +285,7 @@ public class MicrosoftAccessConnection {
 				}
 				// cle etrangere
 				while (R_FK.next()) {
-					addconstraints = addconstraints + "\nALTER TABLE " + R_table.getString("TABLE_NAME");
+					addconstraints = addconstraints + "\n\nALTER TABLE " + R_table.getString("TABLE_NAME");
 					addconstraints = addconstraints + "\nADD CONSTRAINT fk_" + R_FK.getString("PKTABLE_NAME")
 							+ " FOREIGN KEY(" + R_FK.getString("FKCOLUMN_NAME") + ") REFERENCES "
 							+ R_FK.getString("PKTABLE_NAME") + "(" + R_FK.getString("PKCOLUMN_NAME") + ");";
@@ -294,7 +296,7 @@ public class MicrosoftAccessConnection {
 					}
 				}
 
-				createTableQuery = createTableQuery + "\n);\n";
+				createTableQuery = createTableQuery + "\n);";
 				i++;
 
 			}
