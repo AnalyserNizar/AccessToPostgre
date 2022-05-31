@@ -1,10 +1,8 @@
 package accesstopostgre;
 
-import java.awt.Font;
 import java.io.File;
 
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 

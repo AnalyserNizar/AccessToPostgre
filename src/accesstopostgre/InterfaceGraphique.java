@@ -1,8 +1,5 @@
 package accesstopostgre;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -68,14 +65,11 @@ public class InterfaceGraphique extends JFrame {
 				try {
 					new EmptyPostgresDB();
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				try {
-
 					new MicrosoftAccessConnection();
 				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				new PostgreSQLConnection();
@@ -85,7 +79,6 @@ public class InterfaceGraphique extends JFrame {
 		btnNewButton.setBounds(118, 203, 216, 36);
 		contentPane.add(btnNewButton);
 		this.setVisible(true);
-
 
 	}
 }

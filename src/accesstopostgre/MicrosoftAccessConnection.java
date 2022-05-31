@@ -22,19 +22,6 @@ public class MicrosoftAccessConnection {
 	public static String ACCDB = null;
 	public FileChooser chooser;
 
-	public static String getFKeyData(String tableName, int i) throws SQLException {
-		Connection con;
-		String url = "jdbc:ucanaccess://C:\\Users\\hp\\Desktop\\AccessToPostgre\\Database1.accdb";
-		con = DriverManager.getConnection(url);
-
-		DatabaseMetaData dm = con.getMetaData();
-		ResultSet rs = dm.getImportedKeys(null, null, tableName);
-		String fkTableData = null;
-		while (rs.next()) {
-			fkTableData = rs.getString(i);
-		}
-		return fkTableData;
-	}
 
 	public MicrosoftAccessConnection() throws InterruptedException {
 
