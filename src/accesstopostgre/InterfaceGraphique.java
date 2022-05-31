@@ -46,12 +46,12 @@ public class InterfaceGraphique extends JFrame {
 		contentPane.add(lblNewLabel_username);
 
 		textField_username = new JTextField();
-		textField_username.setBounds(37, 63, 208, 20);
+		textField_username.setBounds(37, 63, 216, 26);
 		contentPane.add(textField_username);
 		textField_username.setColumns(10);
 
 		textField_pwd = new JTextField();
-		textField_pwd.setBounds(37, 147, 208, 20);
+		textField_pwd.setBounds(37, 147, 216, 29);
 		contentPane.add(textField_pwd);
 		textField_pwd.setColumns(10);
 
