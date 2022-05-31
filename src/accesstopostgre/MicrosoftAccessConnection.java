@@ -1,11 +1,5 @@
 package accesstopostgre;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -15,8 +9,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Scanner;
-
-import javax.imageio.stream.FileImageOutputStream;
 
 public class MicrosoftAccessConnection {
 	Scanner scan = new Scanner(System.in);
@@ -29,8 +21,6 @@ public class MicrosoftAccessConnection {
 	public int taille = 0;
 	public static String ACCDB = null;
 	public FileChooser chooser;
-	public static FileOutputStream fos=null;
-	
 
 	public static String getFKeyData(String tableName, int i) throws SQLException {
 		Connection con;
@@ -46,14 +36,13 @@ public class MicrosoftAccessConnection {
 		return fkTableData;
 	}
 
-	public MicrosoftAccessConnection() throws InterruptedException, IOException {
+	public MicrosoftAccessConnection() throws InterruptedException {
 
 		try {
 
 			// connexion a la base de donnee access
 
 			Connection con = DriverManager.getConnection(FileChooser.dBurlString);
-			System.out.println("Connection reussie a la base de donnee");
 			Statement stat = con.createStatement();
 			DatabaseMetaData metaData = con.getMetaData();
 			ResultSet R_table = metaData.getTables(null, null, "%", null);
@@ -85,7 +74,6 @@ public class MicrosoftAccessConnection {
 								insertInto += ",";
 							}
 						}
-					
 						insertInto += ")\r\n" + "VALUES ";
 						bool = false;
 					}
@@ -134,29 +122,7 @@ public class MicrosoftAccessConnection {
 
 							break;
 						case 2004:
-							byte[] image = new byte[1024];
-							if(R_listcolumns.getBinaryStream (j) != null) {
-							/*	InputStream is= R_listcolumns.getBinaryStream (j);
-	                             
-								fos=new FileOutputStream("C:\\Users\\Public\\Pictures\\image.png");
-								int k;
-								while((k=is.read())!=-1)
-								{
-								fos.write(k);
-								}*/
-								
-									
-									Blob imageBlob = R_listcolumns.getBlob(j);
-									FileOutputStream fileoutputstream = new FileOutputStream("C:\\Users\\Public\\Pictures\\salam.png" ) ;
-									fileoutputstream.write (imageBlob.getBytes (1,(int) imageBlob . length()));
-									
-								
-								      
-							
-								}
-							
-		
-							insertInto += "''";
+							insertInto += "'" + R_listcolumns.getBlob(j) + "'";
 							if (j < columnCount) {
 								insertInto += ",";
 							}
@@ -168,9 +134,9 @@ public class MicrosoftAccessConnection {
 							}
 							break;
 						default:
-							String str = R_listcolumns.getString(j) ;
+							String str = R_listcolumns.getString(j);
 							str = str.replace("'", " ");
-							insertInto += "'" + str +"'";
+							insertInto += "'" + str + "'";
 							if (j < columnCount) {
 								insertInto += ",";
 							}
@@ -197,17 +163,11 @@ public class MicrosoftAccessConnection {
 					switch (listcolumns_meta.getColumnType(j)) {
 					case 4:
 						if (nullable == ResultSetMetaData.columnNoNulls) {
-							if(listcolumns_meta.isAutoIncrement(j)) {
-							createTableQuery = createTableQuery + "SERIAL NOT NULL,\r\n";
-							}else {
 							createTableQuery = createTableQuery + "INT NOT NULL,\r\n";
-							}
+
 						} else {
-							if(listcolumns_meta.isAutoIncrement(j)) {
-							createTableQuery = createTableQuery + "SERIAL,\r\n";
-							}else {
+
 							createTableQuery = createTableQuery + "INT,\r\n";
-							}
 						}
 						break;
 					case 12:
@@ -236,17 +196,9 @@ public class MicrosoftAccessConnection {
 					case -5:
 
 						if (nullable == ResultSetMetaData.columnNoNulls) {
-							if(listcolumns_meta.isAutoIncrement(j)) {
-							createTableQuery = createTableQuery + "BIGSERIAL NOT NULL,\r\n";
-							}else {
 							createTableQuery = createTableQuery + "BIGINT NOT NULL,\r\n";
-							}
 						} else {
-							if(listcolumns_meta.isAutoIncrement(j)) {
-							createTableQuery = createTableQuery + "BIGSERIAL,\r\n";
-							}else {
 							createTableQuery = createTableQuery + "BIGINT,\r\n";
-							}
 						}
 						break;
 
@@ -265,17 +217,9 @@ public class MicrosoftAccessConnection {
 						break;
 					case 5:
 						if (nullable == ResultSetMetaData.columnNoNulls) {
-							if(listcolumns_meta.isAutoIncrement(j)) {
-							createTableQuery = createTableQuery + "SMALLSERIAL NOT NULL,\r\n";
-							}else {
-							createTableQuery = createTableQuery + "SMALLINT NOT NULL,\r\n";	
-							}
+							createTableQuery = createTableQuery + "SMALLINT NOT NULL,\r\n";
 						} else {
-							if(listcolumns_meta.isAutoIncrement(j)) {
-							createTableQuery = createTableQuery + "SMALLSERIAL,\r\n";
-							}else {
-							createTableQuery = createTableQuery + "SMALLINT,\r\n";	
-							}
+							createTableQuery = createTableQuery + "SMALLINT,\r\n";
 						}
 						break;
 					case 91:
@@ -356,7 +300,7 @@ public class MicrosoftAccessConnection {
 				i++;
 
 			}
-            
+
 			stat.close();
 			con.close();
 		} catch (SQLException e) {

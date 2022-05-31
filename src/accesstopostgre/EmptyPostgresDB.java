@@ -20,12 +20,7 @@ public class EmptyPostgresDB {
 		String url2 = url[url.length - 1].toString();
 		MicrosoftAccessConnection.ACCDB = url2.split("[.]")[0];
 		// pour la connection a postgresql
-		System.out.println("entrer votre username postgre");
-		username = scan.next();
-		System.out.println("entrer votre mot de passe postgre");
-		mdp = scan.next();
-		System.out.println("Connection a la base de donnee");
-		Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost/", username, mdp);
+		Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost/", InterfaceGraphique.username, InterfaceGraphique.pwd);
 		Statement st = conn.createStatement();
 
 		// pour la creation de la base de donnee postgre
