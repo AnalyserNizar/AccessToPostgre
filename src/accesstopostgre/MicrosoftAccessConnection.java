@@ -163,11 +163,17 @@ public class MicrosoftAccessConnection {
 					switch (listcolumns_meta.getColumnType(j)) {
 					case 4:
 						if (nullable == ResultSetMetaData.columnNoNulls) {
+							if(listcolumns_meta.isAutoIncrement(j)) {
+							createTableQuery = createTableQuery + "SERIAL NOT NULL,\r\n";
+							}else {
 							createTableQuery = createTableQuery + "INT NOT NULL,\r\n";
-
+							}
 						} else {
-
+							if(listcolumns_meta.isAutoIncrement(j)) {
+							createTableQuery = createTableQuery + "SERIAL,\r\n";
+							}else {
 							createTableQuery = createTableQuery + "INT,\r\n";
+							}
 						}
 						break;
 					case 12:
@@ -196,9 +202,17 @@ public class MicrosoftAccessConnection {
 					case -5:
 
 						if (nullable == ResultSetMetaData.columnNoNulls) {
+							if(listcolumns_meta.isAutoIncrement(j)) {
+							createTableQuery = createTableQuery + "BIGSERIAL NOT NULL,\r\n";
+							}else {
 							createTableQuery = createTableQuery + "BIGINT NOT NULL,\r\n";
+							}
 						} else {
+							if(listcolumns_meta.isAutoIncrement(j)) {
+							createTableQuery = createTableQuery + "BIGSERIAL,\r\n";
+							}else {
 							createTableQuery = createTableQuery + "BIGINT,\r\n";
+							}
 						}
 						break;
 
@@ -217,9 +231,17 @@ public class MicrosoftAccessConnection {
 						break;
 					case 5:
 						if (nullable == ResultSetMetaData.columnNoNulls) {
-							createTableQuery = createTableQuery + "SMALLINT NOT NULL,\r\n";
+							if(listcolumns_meta.isAutoIncrement(j)) {
+							createTableQuery = createTableQuery + "SMALLSERIAL NOT NULL,\r\n";
+							}else {
+							createTableQuery = createTableQuery + "SMALLINT NOT NULL,\r\n";	
+							}
 						} else {
-							createTableQuery = createTableQuery + "SMALLINT,\r\n";
+							if(listcolumns_meta.isAutoIncrement(j)) {
+							createTableQuery = createTableQuery + "SMALLSERIAL,\r\n";
+							}else {
+							createTableQuery = createTableQuery + "SMALLINT,\r\n";	
+							}
 						}
 						break;
 					case 91:
