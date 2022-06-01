@@ -9,6 +9,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Scanner;
+import java.sql.*;
+import net.ucanaccess.complex.Attachment;
+import org.apache.commons.io.*;
+import java.io.*;
 
 public class MicrosoftAccessConnection {
 	Scanner scan = new Scanner(System.in);
@@ -22,8 +26,21 @@ public class MicrosoftAccessConnection {
 	public static String ACCDB = null;
 	public FileChooser chooser;
 
+	public static String getFKeyData(String tableName, int i) throws SQLException {
+		Connection con;
+		String url = "jdbc:ucanaccess://C:\\Users\\hp\\Desktop\\AccessToPostgre\\Database1.accdb";
+		con = DriverManager.getConnection(url);
 
-	public MicrosoftAccessConnection() throws InterruptedException {
+		DatabaseMetaData dm = con.getMetaData();
+		ResultSet rs = dm.getImportedKeys(null, null, tableName);
+		String fkTableData = null;
+		while (rs.next()) {
+			fkTableData = rs.getString(i);
+		}
+		return fkTableData;
+	}
+
+	public MicrosoftAccessConnection() throws InterruptedException, IOException {
 
 		try {
 
@@ -109,7 +126,15 @@ public class MicrosoftAccessConnection {
 
 							break;
 						case 2004:
-							insertInto += "'" + R_listcolumns.getBlob(j) + "'";
+							if(R_listcolumns.getBlob(j) != null) {
+							Blob clob = R_listcolumns.getBlob(j);
+							byte[] byteArr =  
+								clob.getBytes(1,(int)clob.length());
+				 
+							FileOutputStream fileOutputStream = 
+							   new FileOutputStream(".\\savedImage.jpg");
+							fileOutputStream.write(byteArr); 
+							}
 							if (j < columnCount) {
 								insertInto += ",";
 							}
@@ -119,6 +144,18 @@ public class MicrosoftAccessConnection {
 							if (j < columnCount) {
 								insertInto += ",";
 							}
+							break;
+						case 1111:
+							if(R_listcolumns.getObject(j) != null) {
+							Attachment[] atts = (Attachment[]) R_listcolumns.getObject(j);
+				            for (Attachment att : atts) {
+				            	
+				            	System.out.println(att.getName());
+				                org.apache.commons.io.FileUtils.writeByteArrayToFile(new File(".//"+ att.getName()), att.getData());
+				                insertInto += "bytea('.\\"+ att.getName()+"')";
+							}
+				            
+						}
 							break;
 						default:
 							String str = R_listcolumns.getString(j);
@@ -266,7 +303,15 @@ public class MicrosoftAccessConnection {
 							createTableQuery = createTableQuery + "TIME,\r\n";
 						}
 						break;
+					case 1111:
+						if (nullable == ResultSetMetaData.columnNoNulls) {
+							createTableQuery = createTableQuery + "BYTEA NOT NULL,\r\n";
+						} else {
+							createTableQuery = createTableQuery + "BYTEA,\r\n";
+						}
+						break;
 					default:
+						
 					}
 
 				}
@@ -309,6 +354,9 @@ public class MicrosoftAccessConnection {
 				i++;
 
 			}
+			System.out.println(createTableQuery);
+			System.out.println(insertInto);
+			System.out.println(addconstraints);
 
 			stat.close();
 			con.close();

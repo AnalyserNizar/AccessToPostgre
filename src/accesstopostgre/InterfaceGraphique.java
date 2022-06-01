@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
@@ -69,7 +70,7 @@ public class InterfaceGraphique extends JFrame {
 				}
 				try {
 					new MicrosoftAccessConnection();
-				} catch (InterruptedException e1) {
+				} catch (InterruptedException | IOException e1) {
 					e1.printStackTrace();
 				}
 				new PostgreSQLConnection();
