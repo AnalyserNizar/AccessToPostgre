@@ -73,7 +73,6 @@ public class InterfaceGraphique extends JFrame {
 					e1.printStackTrace();
 				}
 				new PostgreSQLConnection();
-				JOptionPane.showMessageDialog(null, "Base de donnée crée!");
 			}
 		});
 		btnNewButton.setBounds(118, 203, 216, 36);
