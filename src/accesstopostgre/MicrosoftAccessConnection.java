@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 import java.util.Scanner;
 import java.sql.*;
 import net.ucanaccess.complex.Attachment;
-import org.apache.commons.io.*;
 import java.io.*;
 
 public class MicrosoftAccessConnection {
