@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
+
 
 import net.ucanaccess.complex.Attachment;
 import javax.swing.JOptionPane;
@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 
 public class PostgreSQLConnection {
 	private String[] options = { "Convertir une autre Base de donnée", "Fermer" };
-	String insertInto ="";
+	private String insertInto ="";
 
 	public PostgreSQLConnection() throws IOException {
 		try {
@@ -103,9 +103,9 @@ public class PostgreSQLConnection {
 									clob.getBytes(1,(int)clob.length());
 					 
 								FileOutputStream fileOutputStream = 
-								   new FileOutputStream(".\\savedImage.jpg");
+								   new FileOutputStream(".\\files\\savedImage.jpg");
 								fileOutputStream.write(byteArr); 
-								File file = new File(".\\savedImage.jpg");
+								File file = new File(".\\files\\savedImage.jpg");
 					            FileInputStream fis = new FileInputStream(file);
 					            ps.setBinaryStream(j, fis, (int)file.length());
 								}
@@ -121,8 +121,8 @@ public class PostgreSQLConnection {
 						            for (Attachment att : atts) {
 						                System.out.println(att.getName());
 						                org.apache.commons.io.FileUtils.writeByteArrayToFile(
-						                        new File(".\\" + att.getName()), att.getData());
-						                File file = new File(".\\"+att.getName());
+						                        new File(".\\files\\" + att.getName()), att.getData());
+						                File file = new File(".\\files\\"+att.getName());
 							            FileInputStream fis = new FileInputStream(file);
 							            ps.setBinaryStream(j, fis, (int)file.length());
 						            }

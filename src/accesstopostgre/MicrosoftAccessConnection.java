@@ -7,26 +7,18 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.Scanner;
-import java.sql.*;
-import net.ucanaccess.complex.Attachment;
 import java.io.*;
 
 public class MicrosoftAccessConnection {
-	Scanner scan = new Scanner(System.in);
 	public String columnName = null;
-	public static String createDbQuery = "";
 	public static String createTableQuery = "";
-	public static String insertInto = "";
 	public static String addconstraints = "";
-	public int columnCount = 0;
-	public int taille = 0;
+	private int columnCount = 0;
 	public static String ACCDB = null;
-	public FileChooser chooser;
-	public static Connection con;
-	public static ResultSet R_table ;
-	public static Statement stat ;
+	private static Connection con;
+	private static ResultSet R_table ;
+	private static Statement stat ;
+	
 
 
 
@@ -36,7 +28,7 @@ public class MicrosoftAccessConnection {
 
 			// connexion a la base de donnee access
 
-			Connection con = DriverManager.getConnection(FileChooser.dBurlString);
+			con = DriverManager.getConnection(FileChooser.dBurlString);
 			stat = con.createStatement();
 			DatabaseMetaData metaData = con.getMetaData();
 			R_table = metaData.getTables(null, null, "%", null);
@@ -240,7 +232,6 @@ public class MicrosoftAccessConnection {
 			e.printStackTrace();
 		}
 		// -----------------------
-		scan.close();
 
 	}
 

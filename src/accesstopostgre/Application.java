@@ -1,13 +1,11 @@
 
 package accesstopostgre;
 
-import java.sql.SQLException;
-
 
 
 public class Application {
 
-	public static void main(String[] args) throws InterruptedException, SQLException {
+	public static void main(String[] args)  {
 		new LookAndFeel();
 		new InterfaceGraphique();
 

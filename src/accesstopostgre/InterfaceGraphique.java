@@ -4,7 +4,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -15,7 +14,7 @@ import java.awt.Font;
 
 public class InterfaceGraphique extends JFrame {
 
-	static JPanel contentPane;
+	private static JPanel contentPane;
 	private JTextField textField_username;
 	private JTextField textField_pwd;
 	private JLabel lblNewLabel_username;

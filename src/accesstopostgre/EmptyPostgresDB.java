@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
 
 public class EmptyPostgresDB {
 
-	public static String username;
-	public static String mdp;
 
 	public EmptyPostgresDB() throws SQLException {
 		Scanner scan = new Scanner(System.in);
