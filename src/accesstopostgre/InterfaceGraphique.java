@@ -65,7 +65,7 @@ public class InterfaceGraphique extends JFrame {
 				FileChooser.createFilePicker();
 				try {
 					new EmptyPostgresDB();
-				} catch (SQLException e1) {
+				} catch (SQLException e1) { 
 					e1.printStackTrace();
 				}
 				try {
@@ -73,7 +73,12 @@ public class InterfaceGraphique extends JFrame {
 				} catch (InterruptedException | IOException e1) {
 					e1.printStackTrace();
 				}
-				new PostgreSQLConnection();
+				try {
+					new PostgreSQLConnection();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnNewButton.setBounds(118, 203, 216, 36);

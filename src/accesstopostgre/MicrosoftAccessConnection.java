@@ -24,20 +24,11 @@ public class MicrosoftAccessConnection {
 	public int taille = 0;
 	public static String ACCDB = null;
 	public FileChooser chooser;
+	public static Connection con;
+	public static ResultSet R_table ;
+	public static Statement stat ;
 
-	public static String getFKeyData(String tableName, int i) throws SQLException {
-		Connection con;
-		String url = "jdbc:ucanaccess://C:\\Users\\hp\\Desktop\\AccessToPostgre\\Database1.accdb";
-		con = DriverManager.getConnection(url);
 
-		DatabaseMetaData dm = con.getMetaData();
-		ResultSet rs = dm.getImportedKeys(null, null, tableName);
-		String fkTableData = null;
-		while (rs.next()) {
-			fkTableData = rs.getString(i);
-		}
-		return fkTableData;
-	}
 
 	public MicrosoftAccessConnection() throws InterruptedException, IOException {
 
@@ -46,9 +37,9 @@ public class MicrosoftAccessConnection {
 			// connexion a la base de donnee access
 
 			Connection con = DriverManager.getConnection(FileChooser.dBurlString);
-			Statement stat = con.createStatement();
+			stat = con.createStatement();
 			DatabaseMetaData metaData = con.getMetaData();
-			ResultSet R_table = metaData.getTables(null, null, "%", null);
+			R_table = metaData.getTables(null, null, "%", null);
 
 			// la creation des requetes sql a partir du BD access
 
@@ -61,122 +52,7 @@ public class MicrosoftAccessConnection {
 				columnCount = listcolumns_meta.getColumnCount();
 				ResultSet R_PK = metaData.getPrimaryKeys(null, null, R_table.getString("TABLE_NAME"));
 				ResultSet R_FK = metaData.getImportedKeys(null, null, R_table.getString("TABLE_NAME"));
-				boolean bool = true;
-				int cmp = 0;
-
-				while (R_listcolumns.next()) {
-					if (bool) {
-						insertInto += "\nINSERT INTO " + R_table.getString("TABLE_NAME");
-						for (int j = 1; j < columnCount + 1; j++) {
-							if (j == 1) {
-								insertInto += "(";
-							}
-
-							insertInto += listcolumns_meta.getColumnName(j);
-							if (j < columnCount) {
-								insertInto += ",";
-							}
-						}
-						insertInto += ")\r\n" + "VALUES ";
-						bool = false;
-					}
-					// ligne par ligne
-					insertInto += "(";
-					cmp++;
-					int j = 1;
-					for (j = 1; j < columnCount + 1; j++) {// collumn par collumn
-						switch (listcolumns_meta.getColumnType(j)) {
-						case 4:
-							insertInto += R_listcolumns.getInt(j);
-							if (j < columnCount) {
-								insertInto += ",";
-							}
-							break;
-						case 3:
-							insertInto += R_listcolumns.getBigDecimal(j);
-							if (j < columnCount) {
-								insertInto += ",";
-							}
-							break;
-						case 2:
-							insertInto += R_listcolumns.getBigDecimal(j);
-							if (j < columnCount) {
-								insertInto += ",";
-							}
-							break;
-						case 91:
-							insertInto += R_listcolumns.getDate(j);
-							if (j < columnCount) {
-								insertInto += ",";
-							}
-							break;
-						case 93:
-							Timestamp date = R_listcolumns.getTimestamp(j);
-							if (!R_listcolumns.wasNull()) {
-								insertInto += "'" + date;
-								insertInto = insertInto.substring(0, insertInto.length() - 2);
-								insertInto += "'";
-							} else {
-								insertInto += date;
-							}
-							if (j < columnCount) {
-								insertInto += ",";
-							}
-
-							break;
-						case 2004:
-							if(R_listcolumns.getBlob(j) != null) {
-							Blob clob = R_listcolumns.getBlob(j);
-							byte[] byteArr =  
-								clob.getBytes(1,(int)clob.length());
-				 
-							FileOutputStream fileOutputStream = 
-							   new FileOutputStream(".\\savedImage.jpg");
-							fileOutputStream.write(byteArr); 
-							}
-							if (j < columnCount) {
-								insertInto += ",";
-							}
-							break;
-						case 16:
-							insertInto += R_listcolumns.getBoolean(j);
-							if (j < columnCount) {
-								insertInto += ",";
-							}
-							break;
-						case 1111:
-							if(R_listcolumns.getObject(j) != null) {
-							Attachment[] atts = (Attachment[]) R_listcolumns.getObject(j);
-				            for (Attachment att : atts) {
-				            	
-				            	System.out.println(att.getName());
-				                org.apache.commons.io.FileUtils.writeByteArrayToFile(new File(".//"+ att.getName()), att.getData());
-				                insertInto += "bytea('.\\"+ att.getName()+"')";
-							}
-				            
-						}
-							break;
-						default:
-							String str = R_listcolumns.getString(j);
-							str = str.replace("'", " ");
-							insertInto += "'" + str + "'";
-							if (j < columnCount) {
-								insertInto += ",";
-							}
-						}
-					}
-
-					insertInto += "),\n";
-
-				}
-				if (cmp > 0) {
-					insertInto = insertInto.substring(0, insertInto.length() - 2);
-				}
-				if (bool == false) {
-					insertInto += ";\n";
-				}
-				bool = true;
-
+	
 				for (int j = 1; j < columnCount + 1; j++) {
 					int nullable = listcolumns_meta.isNullable(j);
 
@@ -354,11 +230,11 @@ public class MicrosoftAccessConnection {
 
 			}
 			System.out.println(createTableQuery);
-			System.out.println(insertInto);
+			
 			System.out.println(addconstraints);
 
 			stat.close();
-			con.close();
+			
 		} catch (SQLException e) {
 
 			e.printStackTrace();
