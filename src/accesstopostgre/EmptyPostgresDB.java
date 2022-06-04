@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 public class EmptyPostgresDB {
 
-
 	public EmptyPostgresDB() throws SQLException {
 		Scanner scan = new Scanner(System.in);
 		// pour recuperer le nom du fichier access
@@ -24,8 +23,8 @@ public class EmptyPostgresDB {
 
 		// pour la creation de la base de donnee postgre
 		try {
-			st.executeUpdate("DROP DATABASE IF EXISTS " + MicrosoftAccessConnection.ACCDB.toLowerCase() + ";");
-			st.executeUpdate("CREATE DATABASE " + MicrosoftAccessConnection.ACCDB.toLowerCase() + ";");
+			st.executeUpdate("DROP DATABASE IF EXISTS \"" + MicrosoftAccessConnection.ACCDB + "\";");
+			st.executeUpdate("CREATE DATABASE \"" + MicrosoftAccessConnection.ACCDB + "\";");
 		} finally {
 			st.close();
 			conn.close();
