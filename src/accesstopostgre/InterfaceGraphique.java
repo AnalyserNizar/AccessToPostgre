@@ -2,6 +2,7 @@ package accesstopostgre;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -16,7 +17,7 @@ public class InterfaceGraphique extends JFrame {
 
 	private static JPanel contentPane;
 	private JTextField textField_username;
-	private JTextField textField_pwd;
+	private JPasswordField textField_pwd;
 	private JLabel lblNewLabel_username;
 	private JLabel lblNewLabel_pwd;
 	static String username;
@@ -50,7 +51,7 @@ public class InterfaceGraphique extends JFrame {
 		contentPane.add(textField_username);
 		textField_username.setColumns(10);
 
-		textField_pwd = new JTextField();
+		textField_pwd = new JPasswordField();
 		textField_pwd.setBounds(37, 147, 216, 29);
 		contentPane.add(textField_pwd);
 		textField_pwd.setColumns(10);

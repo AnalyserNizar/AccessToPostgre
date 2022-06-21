@@ -102,7 +102,6 @@ public class PostgreSQLConnection {
 								FileInputStream fis = new FileInputStream(file);
 								ps.setBinaryStream(j, fis, (int) file.length());
 							}
-
 							break;
 						case 16:
 							ps.setBoolean(j, R_listcolumns.getBoolean(j));
