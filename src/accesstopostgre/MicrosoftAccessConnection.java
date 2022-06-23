@@ -37,7 +37,7 @@ public class MicrosoftAccessConnection {
 
 			while (R_table.next()) {
 
-				createTableQuery += "\nCREATE TABLE " + R_table.getString("TABLE_NAME") + "(\r\n";
+				createTableQuery += "\nCREATE TABLE " + R_table.getString("TABLE_NAME")+ "(\r\n";
 
 				ResultSet R_listcolumns = stat.executeQuery("SELECT * FROM " + R_table.getString("TABLE_NAME"));
 				ResultSetMetaData listcolumns_meta = R_listcolumns.getMetaData();
@@ -106,7 +106,7 @@ public class MicrosoftAccessConnection {
 							}
 						}
 						break;
-
+					case 8:
 					case 3:
 						if (listcolumns_meta.isCurrency(j)) {
 							if (nullable == ResultSetMetaData.columnNoNulls) {

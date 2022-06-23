@@ -25,7 +25,7 @@ public class PostgreSQLConnection {
 		try {
 			Connection con = DriverManager.getConnection(FileChooser.dBurlString);
 			// connection au base de donnee postgresql
-			String url = "jdbc:postgresql://localhost/" + MicrosoftAccessConnection.ACCDB ;
+			String url = "jdbc:postgresql://localhost/" + MicrosoftAccessConnection.ACCDB;
 			Connection conn = DriverManager.getConnection(url, InterfaceGraphique.username, InterfaceGraphique.pwd);
 			Statement st = conn.createStatement();
 			// execution des requetes
@@ -36,7 +36,8 @@ public class PostgreSQLConnection {
 			while (R_table.next()) {
 				insertInto = "";
 				Statement stat = con.createStatement();
-				ResultSet R_listcolumns = stat.executeQuery("SELECT * FROM " + R_table.getString("TABLE_NAME"));
+				String space = R_table.getString("TABLE_NAME");
+				ResultSet R_listcolumns = stat.executeQuery("SELECT * FROM " + space.replace("\\s ", ""));
 				ResultSetMetaData listcolumns_meta = R_listcolumns.getMetaData();
 				int columnCount = listcolumns_meta.getColumnCount();
 
@@ -68,10 +69,12 @@ public class PostgreSQLConnection {
 
 					for (int j = 1; j < columnCount + 1; j++) {// collumn par collumn
 						switch (listcolumns_meta.getColumnType(j)) {
+						case 5:
 						case 4:
 							ps.setInt(j, R_listcolumns.getInt(j));
 							System.out.println(R_listcolumns.getInt(j));
 							break;
+						case 8:
 						case 3:
 							ps.setBigDecimal(j, R_listcolumns.getBigDecimal(j));
 
