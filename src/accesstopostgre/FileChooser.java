@@ -23,7 +23,6 @@ public class FileChooser {
 		chooser.addChoosableFileFilter(new FileNameExtensionFilter("Microsoft Access 2007 and earlier", "mdb"));
 		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 			dBurlString = "jdbc:ucanaccess://" + chooser.getSelectedFile();
-			// System.out.println(dBurlString);
 		} else {
 			JOptionPane.showMessageDialog(null, "Aucune selection, le program va se fermer", "Attention!",
 					JOptionPane.WARNING_MESSAGE);

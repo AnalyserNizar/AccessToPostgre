@@ -36,7 +36,7 @@ public class PostgreSQLConnection {
 			while (R_table.next()) {
 				insertInto = "";
 				Statement stat = con.createStatement();
-				ResultSet R_listcolumns = stat.executeQuery("SELECT * FROM " + R_table.getString("TABLE_NAME")+"");
+				ResultSet R_listcolumns = stat.executeQuery("SELECT * FROM `" + R_table.getString("TABLE_NAME") + "`");
 				ResultSetMetaData listcolumns_meta = R_listcolumns.getMetaData();
 				int columnCount = listcolumns_meta.getColumnCount();
 
@@ -44,7 +44,7 @@ public class PostgreSQLConnection {
 
 				while (R_listcolumns.next()) {
 					if (bool) {
-						insertInto += "\nINSERT INTO " + R_table.getString("TABLE_NAME")+"";
+						insertInto += "\nINSERT INTO " + R_table.getString("TABLE_NAME").replaceAll("\\s+", "") + "";
 						for (int j = 1; j < columnCount + 1; j++) {
 							if (j == 1) {
 								insertInto += " VALUES (";
@@ -61,7 +61,6 @@ public class PostgreSQLConnection {
 						bool = false;
 					}
 
-					System.out.println(insertInto);
 					PreparedStatement ps = conn.prepareStatement(insertInto);
 
 					// ligne par ligne
@@ -71,7 +70,6 @@ public class PostgreSQLConnection {
 						case 5:
 						case 4:
 							ps.setInt(j, R_listcolumns.getInt(j));
-							System.out.println(R_listcolumns.getInt(j));
 							break;
 						case 8:
 						case 3:
@@ -113,7 +111,7 @@ public class PostgreSQLConnection {
 							Attachment[] atts = (Attachment[]) R_listcolumns.getObject(j);
 							ps.setObject(j, null);
 							for (Attachment att : atts) {
-								System.out.println(att.getName());
+
 								org.apache.commons.io.FileUtils
 										.writeByteArrayToFile(new File(".\\files\\" + att.getName()), att.getData());
 								File file = new File(".\\files\\" + att.getName());
@@ -125,7 +123,6 @@ public class PostgreSQLConnection {
 
 						default:
 							ps.setString(j, R_listcolumns.getString(j));
-							System.out.println(R_listcolumns.getString(j));
 
 						}
 					}
