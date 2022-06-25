@@ -37,7 +37,7 @@ public class MicrosoftAccessConnection {
 
 			while (R_table.next()) {
 
-				createTableQuery += "\nCREATE TABLE " + R_table.getString("TABLE_NAME")+ "(\r\n";
+				createTableQuery += "\nCREATE TABLE " + R_table.getString("TABLE_NAME")+ " (\r\n";
 
 				ResultSet R_listcolumns = stat.executeQuery("SELECT * FROM " + R_table.getString("TABLE_NAME"));
 				ResultSetMetaData listcolumns_meta = R_listcolumns.getMetaData();
@@ -49,9 +49,9 @@ public class MicrosoftAccessConnection {
 					int nullable = listcolumns_meta.isNullable(j);
 
 					columnName = listcolumns_meta.getColumnName(j);
-					createTableQuery = createTableQuery + "    " + columnName + " ";
-
-					switch (listcolumns_meta.getColumnType(j)) {
+					createTableQuery = createTableQuery + "    \"" + columnName + "\" ";
+					int h = listcolumns_meta.getColumnType(j);
+					switch (h) {
 					case 4:
 						if (nullable == ResultSetMetaData.columnNoNulls) {
 							if(listcolumns_meta.isAutoIncrement(j)) {
@@ -115,9 +115,9 @@ public class MicrosoftAccessConnection {
 								createTableQuery = createTableQuery + "MONEY,\r\n";
 							}
 						} else if (nullable == ResultSetMetaData.columnNoNulls) {
-							createTableQuery = createTableQuery + "DECIMAL NOT NULL,\r\n";
+							createTableQuery = createTableQuery + "DOUBLE PRECISION NOT NULL,\r\n";
 						} else {
-							createTableQuery = createTableQuery + "DECIMAL,\r\n";
+							createTableQuery = createTableQuery + "DOUBLE PRECISION,\r\n";
 						}
 						break;
 					case 5:
@@ -140,6 +140,13 @@ public class MicrosoftAccessConnection {
 							createTableQuery = createTableQuery + "DATE NOT NULL,\r\n";
 						} else {
 							createTableQuery = createTableQuery + "DATE,\r\n";
+						}
+						break;
+					case 2:
+						if (nullable == ResultSetMetaData.columnNoNulls) {
+							createTableQuery = createTableQuery + "DECIMAL NOT NULL,\r\n";
+						} else {
+							createTableQuery = createTableQuery + "DECIMAL,\r\n";
 						}
 						break;
 					case 93:
@@ -177,7 +184,15 @@ public class MicrosoftAccessConnection {
 							createTableQuery = createTableQuery + "BYTEA,\r\n";
 						}
 						break;
+					case 1:
+						if (nullable == ResultSetMetaData.columnNoNulls) {
+							createTableQuery = createTableQuery + " UUID NOT NULL,\r\n";
+						} else {
+							createTableQuery = createTableQuery + "UUID,\r\n";
+						}
+						break;
 					default:
+						System.out.println(h);
 						
 					}
 
@@ -187,10 +202,10 @@ public class MicrosoftAccessConnection {
 				int i = 0;
 				while (R_PK.next()) {
 					if (i < 1) {
-						createTableQuery = createTableQuery + "    PRIMARY KEY(";
+						createTableQuery = createTableQuery + "    PRIMARY KEY(\"";
 					}
 					if (i >= 1) {
-						createTableQuery = createTableQuery + ",";
+						createTableQuery = createTableQuery + "\",\"";
 					}
 					if (i >= 0) {
 						createTableQuery = createTableQuery + R_PK.getString("COLUMN_NAME");
@@ -200,7 +215,7 @@ public class MicrosoftAccessConnection {
 
 				if (i >= 1) {
 
-					createTableQuery = createTableQuery + ")";
+					createTableQuery = createTableQuery + "\")";
 				} else {
 					createTableQuery = createTableQuery.substring(0, createTableQuery.length() - 3);
 				}
@@ -208,8 +223,8 @@ public class MicrosoftAccessConnection {
 				while (R_FK.next()) {
 					addconstraints = addconstraints + "\n\nALTER TABLE " + R_table.getString("TABLE_NAME");
 					addconstraints = addconstraints + "\nADD CONSTRAINT fk_" + R_FK.getString("PKTABLE_NAME")
-							+ " FOREIGN KEY(" + R_FK.getString("FKCOLUMN_NAME") + ") REFERENCES "
-							+ R_FK.getString("PKTABLE_NAME") + "(" + R_FK.getString("PKCOLUMN_NAME") + ");";
+							+ " FOREIGN KEY(\"" + R_FK.getString("FKCOLUMN_NAME") + "\") REFERENCES "
+							+ R_FK.getString("PKTABLE_NAME") + "(\"" + R_FK.getString("PKCOLUMN_NAME") + "\");";
 					if (R_FK.getShort("UPDATE_RULE") == 0 || R_FK.getShort("UPDATE_RULE") == 0) {
 
 						addconstraints = addconstraints.substring(0, addconstraints.length() - 1);

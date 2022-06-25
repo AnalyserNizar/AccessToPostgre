@@ -36,8 +36,7 @@ public class PostgreSQLConnection {
 			while (R_table.next()) {
 				insertInto = "";
 				Statement stat = con.createStatement();
-				String space = R_table.getString("TABLE_NAME");
-				ResultSet R_listcolumns = stat.executeQuery("SELECT * FROM " + space.replace("\\s ", ""));
+				ResultSet R_listcolumns = stat.executeQuery("SELECT * FROM " + R_table.getString("TABLE_NAME")+"");
 				ResultSetMetaData listcolumns_meta = R_listcolumns.getMetaData();
 				int columnCount = listcolumns_meta.getColumnCount();
 
@@ -45,7 +44,7 @@ public class PostgreSQLConnection {
 
 				while (R_listcolumns.next()) {
 					if (bool) {
-						insertInto += "\nINSERT INTO " + R_table.getString("TABLE_NAME");
+						insertInto += "\nINSERT INTO " + R_table.getString("TABLE_NAME")+"";
 						for (int j = 1; j < columnCount + 1; j++) {
 							if (j == 1) {
 								insertInto += " VALUES (";
