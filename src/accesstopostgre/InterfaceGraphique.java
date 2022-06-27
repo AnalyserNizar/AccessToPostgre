@@ -61,7 +61,7 @@ public class InterfaceGraphique extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				username = textField_username.getText();
-				pwd = textField_pwd.getText();
+				pwd = textField_pwd.getText();//peut etre remplace par getPassword()
 				FileChooser.createFilePicker();
 				try {
 					new EmptyPostgresDB();
